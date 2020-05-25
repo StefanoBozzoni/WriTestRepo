@@ -1,0 +1,5 @@
+<resources>
+    <declare-styleable name="ViewFlipperEng">
+        <attr name="displayedChild" format="integer" />
+    </declare-styleable>
+</resources>

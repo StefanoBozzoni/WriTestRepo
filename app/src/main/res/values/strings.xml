@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">WriTest</string>
+    <string name="choose_file_from_phone_str">Sfoglia dal telefono</string>
+    <string name="label_take_photo_str">Scatta una foto</string>
+    <string name="attention_ui_str">Attenzione</string>
+    <string name="cancel_ui_str">Annulla</string>
+    <string name="goOn_str">Ok</string>
+    <string name="question_delete_confirm_str">Vuoi scegliere un altro file ?</string>
+
+</resources>

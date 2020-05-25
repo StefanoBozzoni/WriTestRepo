@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#0E74CD</color>
+    <color name="colorPrimaryDark">#00574B</color>
+    <color name="colorAccent">#D81B60</color>
+
+    <color name="colorSeparatorGreen">#00C5CA</color>
+    <color name="colorSeparatorGray">#D8D8D8</color>
+    <color name="colorSeparatorCyanLight">#EFF9F9</color>
+    <color name="colorSeparatorCyanDark">#D7F0F6</color>
+
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="green">#FF297A38</color>
+    <color name="green_light">#FF3DA764</color>
+    <color name="white_background">#FFFFFF</color>
+    <color name="white_background_dialog">#FAFAFA</color>
+    <color name="white_light">#CCFFFFFF</color>
+    <color name="light_gray">#F8F8F8</color>
+    <color name="red_legacy">#DA4D4C</color>
+    <color name="gray_disable">#CCCCCC</color>
+    <color name="linkColor">#006FFF</color>
+    <color name="blue_dark">#005366</color>
+    <color name="gray">#f9f9f9</color>
+    <color name="bluish_gray">#ebf0f1</color>
+
+</resources>

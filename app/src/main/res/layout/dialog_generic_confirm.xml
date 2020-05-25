@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/round_corners_white"
+    android:orientation="vertical">
+
+
+    <ImageView
+        android:id="@+id/iv_DialogIcon"
+        android:importantForAccessibility="no"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/xlarge_margin"
+        android:src="@drawable/ic_alert_icona_a_ko" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/xlarge_margin"
+        android:layout_marginEnd="@dimen/xlarge_margin"
+        android:textStyle="bold"
+        android:text="@string/attention_ui_str"
+        android:textColor="@color/colorPrimary"
+        android:textSize="35sp" />
+
+    <View
+        android:layout_width="@dimen/xxlarge_margin"
+        android:layout_height="3dp"
+        android:layout_marginStart="@dimen/xlarge_margin"
+        android:layout_marginTop="16dp"
+        android:background="@color/colorSeparatorGreen" />
+
+    <TextView
+        android:id="@+id/tv_DialogTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/xlarge_margin"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="@dimen/xlarge_margin"
+        android:text=""
+        android:textColor="@android:color/black"
+        android:textSize="@dimen/large_text_size"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tv_DialogSubTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/xlarge_margin"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="@dimen/xlarge_margin"
+        tools:text="descrizoine della conferma"
+        android:textColor="@android:color/black"
+        android:textSize="@dimen/medium_text_size" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/btnCancel"
+            android:layout_width="100dp"
+            android:layout_marginTop="@dimen/xlarge_margin"
+            android:layout_marginStart="@dimen/big_margin"
+            style="@style/AppButton.Base.PrimaryColor"
+            android:layout_alignParentStart="true"
+            android:text="@string/cancel_ui_str" />
+
+        <Button
+            android:id="@+id/btnNext"
+            android:layout_width="100dp"
+            android:layout_marginTop="@dimen/xlarge_margin"
+            android:layout_marginEnd="@dimen/big_margin"
+            style="@style/AppButton.Base.White"
+            android:layout_marginBottom="@dimen/xlarge_margin"
+            android:layout_alignParentEnd="true"
+            android:text="@string/goOn_str" />
+
+    </RelativeLayout>
+
+</LinearLayout>
