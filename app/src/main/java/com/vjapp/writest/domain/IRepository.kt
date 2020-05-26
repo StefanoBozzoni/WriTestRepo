@@ -12,4 +12,6 @@ interface IRepository {
     suspend fun uploadFilesToServer(params: UploadFilesRequest): UploadFilesResponse
     fun getFileNameFromCursor(uri: Uri): Pair<String?, Long>
     fun getFilePathFromUri(uri: Uri, outPutFileName: String): File?
+    suspend fun loginAuthentication(username: String, password: String):Boolean
+    suspend fun userRegistration(username: String, password: String):Boolean
 }

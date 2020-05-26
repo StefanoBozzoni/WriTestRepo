@@ -1,5 +1,6 @@
 package com.vjapp.writest.data.remote
 
+import com.vjapp.writest.data.model.EsitoResponse
 import com.vjapp.writest.data.model.Resphttpbin
 import com.vjapp.writest.data.model.UploadFilesResponse
 import okhttp3.MultipartBody
@@ -16,6 +17,7 @@ interface AppService {
     @POST("sendfiles")
     fun sendFiles(@Body request:String): Call<String>
 
+    //Demo api, just to see if retrofit is working
     @GET("https://httpbin.org/get")
     suspend fun httpBinGetDemo(): Response<Resphttpbin>
 
@@ -23,7 +25,6 @@ interface AppService {
     @GET("https://httpbin.org/get")
     fun httpBinGetDemo(): Call<Resphttpbin>
     */
-
     @Multipart
     @POST("https://localhost:8080/inviofiles")
     suspend fun uploadFilesToServer(
@@ -31,4 +32,19 @@ interface AppService {
         @Part fileVideo : MultipartBody.Part,
         @Part("Token") token: RequestBody
     ): Response<UploadFilesResponse>
+
+    @POST("https://localhost:8080/authenticate")
+    @FormUrlEncoded
+    suspend fun loginAuthentication(
+        @Field("username") username : String,
+        @Field("password") pswd     : String
+    ): Response<EsitoResponse>
+
+    @POST("https://localhost:8080/userRegistration")
+    @FormUrlEncoded
+    suspend fun userRegistration(
+        @Field("username") username : String,
+        @Field("password") pswd     : String
+    ): Response<EsitoResponse>
+
 }

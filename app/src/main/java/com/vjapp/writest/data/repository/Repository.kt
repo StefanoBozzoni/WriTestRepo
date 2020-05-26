@@ -69,7 +69,7 @@ class Repository(private val remoteDataSource: RemoteDataSource,
         var file: File? = null
 
         if (uri.toString().startsWith("content://")) {
-            val fileName: String = this.getFileNameFromCursor(uri).first!!
+            //val fileName: String = this.getFileNameFromCursor(uri).first!!
             val outputDir: File = context.cacheDir
 
             file = File.createTempFile(
@@ -92,4 +92,13 @@ class Repository(private val remoteDataSource: RemoteDataSource,
 
         return file
     }
+
+    override suspend fun loginAuthentication(username: String, password: String):Boolean {
+        return remoteDataSource.loginAuthentication(username,password)
+    }
+
+    override suspend fun userRegistration(username: String, password: String):Boolean {
+        return remoteDataSource.userRegistration(username, password)
+    }
+
 }

@@ -9,6 +9,8 @@ val viewModelModule = module {
         SendFilesViewModel(
             get(),
             get(),
+            get(),
+            get(),
             get()
         )
     }

@@ -67,4 +67,16 @@ class RemoteDataSource(
         return body
     }
 
+    suspend fun loginAuthentication(username: String, password: String):Boolean {
+        val response = appService.loginAuthentication(username, password)
+        if ((response.isSuccessful) && (response.body()?.esito=="OK")) return true
+        return false
+    }
+
+    suspend fun userRegistration(username: String, password: String):Boolean {
+        val response = appService.userRegistration(username, password)
+        if ((response.isSuccessful) && (response.body()?.esito=="OK")) return true
+        return false
+    }
+
 }
