@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.google.gms.google-services'
 
 apply plugin: 'kotlin-android'
 
@@ -7,13 +8,13 @@ apply plugin: 'kotlin-android-extensions'
 android {
     signingConfigs {
         debug {
-            storeFile file('C:\\Dev\\UploadFilesPrj\\certificate\\keystore.jks')
+            storeFile file('C:\\Dev\\writestapp\\certificate\\keystore.jks')
             storePassword 'android'
             keyAlias = 'key0'
             keyPassword 'android'
         }
         release {
-            storeFile file('C:\\Dev\\UploadFilesPrj\\certificate\\keystore.jks')
+            storeFile file('C:\\Dev\\writestapp\\certificate\\keystore.jks')
             storePassword 'android'
             keyAlias = 'key0'
             keyPassword 'android'
@@ -21,7 +22,7 @@ android {
     }
     compileSdkVersion 28
     defaultConfig {
-        applicationId "com.vjapp.coroutines"
+        applicationId "com.vjapp.writest"
         minSdkVersion 21
         targetSdkVersion 28
         versionCode 1
@@ -64,6 +65,7 @@ dependencies {
     api "com.squareup.retrofit2:retrofit:${libVersions.retrofit}"
     api "com.squareup.retrofit2:converter-gson:${libVersions.retrofit}"
     api "com.squareup.retrofit2:converter-scalars:${libVersions.retrofit}"
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 
 
 }

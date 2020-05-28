@@ -1,5 +1,6 @@
 package com.vjapp.writest
 
+import android.content.Intent
 import android.os.AsyncTask
 import android.os.Bundle
 import android.text.*
@@ -9,6 +10,7 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.AutoCompleteTextView
 import android.widget.Button
+import android.widget.TextView
 import android.widget.TextView.OnEditorActionListener
 import android.widget.Toast
 import androidx.appcompat.app.ActionBar
@@ -41,6 +43,8 @@ class LoginActivity : AppCompatActivity() {
         setContentView(R.layout.activity_login_card_overlap)
         initComponent()
         hideSystemUI()
+        tvPassword.setHintAndReduceFontSize(getString(R.string.inserisci_la_tua_password),0.9f)
+        tvUserName.setHintAndReduceFontSize(getString(R.string.inserisci_la_tua_email),0.9f)
     }
 
     fun hideSystemUI() {
@@ -84,16 +88,7 @@ class LoginActivity : AppCompatActivity() {
             confirm_password_form.visibility = View.VISIBLE
 
             val strHint = getString(R.string.scegli_una_password)
-            val span = SpannableString(strHint)
-            span.setSpan(
-                RelativeSizeSpan(0.9f),
-                0,
-                strHint.length,
-                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-            )
-            tvPassword.setHint(span)
-
-            //tvPassword.hint = getString(R.string.scegli_una_password)
+            tvPassword.setHintAndReduceFontSize(strHint,0.9f)
 
             Toast.makeText(this, "registrazione (da implementare)", Toast.LENGTH_SHORT).show()
             sign_up.text = "accedi"
@@ -101,7 +96,9 @@ class LoginActivity : AppCompatActivity() {
             email_sign_in_button.text = "REGISTRATI"
         } else {
             confirm_password_form.visibility = View.GONE
-            tvPassword.hint = getString(R.string.scegli_una_password)
+            val strHint = getString(R.string.scegli_una_password)
+            tvPassword.setHintAndReduceFontSize(strHint,0.9f)
+
             sign_up.text = "registrati"
             lblPrimoAccesso.text = "primo accesso ?"
             email_sign_in_button.text = "ACCEDI"
@@ -119,14 +116,14 @@ class LoginActivity : AppCompatActivity() {
         tilPassword.error = null
         tvConfirmPassword.error = null
 
-        val telephone = tvUserName.text.toString()
-        val password = tvPassword.text.toString().trim { it <= ' ' }
+        val userName    = tvUserName.text.toString()
+        val password    = tvPassword.text.toString().trim { it <= ' ' }
         val confirmPswd = tvConfirmPassword.text.toString().trim { it <= ' ' }
 
         if (isSignUpMode) {
             if (password != confirmPswd) {
                 //tilPassword.isEndIconVisible=false
-                tvPassword.error = "le password non coincidono, riprova"
+                tilPassword.error = "le password non coincidono, riprova"
                 return
             }
             //
@@ -136,7 +133,7 @@ class LoginActivity : AppCompatActivity() {
             var focusView: View? = null
 
             // Check for a valid password, if the user entered one.
-            if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
+            if (!isPasswordValid(password)) {
                 //tilPassword.isPasswordVisibilityToggleEnabled=false
                 //tilPassword.isEndIconCheckable=false
                 //tilPassword.setEndIconTintMode(PorterDuff.Mode.CLEAR)
@@ -144,17 +141,16 @@ class LoginActivity : AppCompatActivity() {
                 //tilPassword.endIconMode=TextInputLayout.END_ICON_NONE
                 //tilPassword.requestLayout()
                 tilPassword.error = "Password non valida"
-                //tvPassword.error = "Password errata"
                 focusView = tvPassword
                 cancel = true
             }
 
             // Check for a valid telephone address.
-            if (TextUtils.isEmpty(telephone)) {
+            if (TextUtils.isEmpty(userName)) {
                 tvUserName.error = "Email obbligatoria"
                 focusView = tvUserName
                 cancel = true
-            } else if (!isEmailValid(telephone)) {
+            } else if (!isEmailValid(userName)) {
                 tvUserName.error = "Email non valida"
                 focusView = tvUserName
                 cancel = true
@@ -166,7 +162,7 @@ class LoginActivity : AppCompatActivity() {
             } else {
                 // Show a progress spinner, and kick off a background task to perform the user login attempt.
                 showProgress(true)
-                mAuthTask = UserLoginTask(telephone, password)
+                mAuthTask = UserLoginTask(userName, password)
                 mAuthTask!!.execute(null as Void?)
             }
         }
@@ -191,9 +187,10 @@ class LoginActivity : AppCompatActivity() {
      * the user.
      */
     inner class UserLoginTask internal constructor(
-        private val mTelephone: String,
+        private val mUserName: String,
         private val mPassword: String
     ) : AsyncTask<Void?, Void?, Boolean>() {
+
         override fun doInBackground(vararg params: Void?): Boolean {
             // TODO: attempt authentication against a network service.
             try {
@@ -204,12 +201,16 @@ class LoginActivity : AppCompatActivity() {
             }
             for (credential in DUMMY_CREDENTIALS) {
                 val pieces = credential.split(":").toTypedArray()
-                if (pieces[0] == mTelephone) {
+                if (pieces[0] == mUserName) {
                     // Account exists, return true if the password matches.
                     return pieces[1] == mPassword
                 }
             }
-            // TODO: register the new account here.
+
+            if (isSignUpMode) {
+                // TODO: register the new account here.
+            }
+
             return true
         }
 
@@ -218,9 +219,11 @@ class LoginActivity : AppCompatActivity() {
             showProgress(false)
             if (success) {
                 showProgress(false)
-                Toast.makeText(applicationContext, "Login Success", Toast.LENGTH_SHORT).show()
+                Toast.makeText(applicationContext, "Accesso eseguito", Toast.LENGTH_SHORT).show()
+                val i = Intent(applicationContext, UploadFilesActivity::class.java )
+                startActivity(i)
             } else {
-                tvPassword.error = "password errata"
+                tilPassword.error = "Password non valida"
                 tvPassword.requestFocus()
             }
         }
@@ -235,6 +238,17 @@ class LoginActivity : AppCompatActivity() {
         private val DUMMY_CREDENTIALS = arrayOf(
             "foo@example.com:hello", "bar@example.com:world"
         )
+    }
+
+    fun TextView.setHintAndReduceFontSize(str:String, proportion: Float) {
+        val span = SpannableString(str)
+        span.setSpan(
+            RelativeSizeSpan(proportion),
+            0,
+            str.length,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+        this.setHint(span)
     }
 
 }

@@ -1,6 +1,8 @@
 package com.vjapp.writest.domain
 
 import android.net.Uri
+import com.vjapp.writest.data.model.ClassesResponse
+import com.vjapp.writest.data.model.SchoolsResponse
 import com.vjapp.writest.data.model.UploadFilesRequest
 import com.vjapp.writest.data.model.UploadFilesResponse
 import java.io.File
@@ -14,4 +16,6 @@ interface IRepository {
     fun getFilePathFromUri(uri: Uri, outPutFileName: String): File?
     suspend fun loginAuthentication(username: String, password: String):Boolean
     suspend fun userRegistration(username: String, password: String):Boolean
+    suspend fun getSchools(): SchoolsResponse
+    suspend fun getClasses(): ClassesResponse
 }

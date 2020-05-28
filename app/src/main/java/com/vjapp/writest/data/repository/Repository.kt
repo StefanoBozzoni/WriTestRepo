@@ -4,15 +4,17 @@ import android.content.Context
 import android.database.Cursor
 import android.net.Uri
 import android.provider.OpenableColumns
+import com.google.gson.Gson
+import com.vjapp.writest.R
+import com.vjapp.writest.data.model.ClassesResponse
+import com.vjapp.writest.data.model.SchoolsResponse
 import com.vjapp.writest.data.model.UploadFilesRequest
 import com.vjapp.writest.data.model.UploadFilesResponse
 import com.vjapp.writest.data.repository.datasource.RemoteDataSource
 import com.vjapp.writest.domain.IRepository
-import java.io.File
-import java.io.FileOutputStream
+import java.io.*
 
-class Repository(private val remoteDataSource: RemoteDataSource,
-                 private val context: Context): IRepository {
+class Repository(private val remoteDataSource: RemoteDataSource, private val context: Context): IRepository {
     override fun getToken(): String {
         return remoteDataSource.getToken()
     }
@@ -99,6 +101,26 @@ class Repository(private val remoteDataSource: RemoteDataSource,
 
     override suspend fun userRegistration(username: String, password: String):Boolean {
         return remoteDataSource.userRegistration(username, password)
+    }
+
+    override suspend fun getSchools(): SchoolsResponse {
+        /* mock schools
+        val raw: InputStream = context.resources.openRawResource(R.raw.schools)
+        val rd: Reader = BufferedReader(InputStreamReader(raw))
+        val gson = Gson()
+        return gson.fromJson(rd, SchoolsResponse::class.java)
+        */
+        return remoteDataSource.getSchools()
+    }
+
+    override suspend fun getClasses(): ClassesResponse {
+        /* mock classes
+        val raw: InputStream = context.resources.openRawResource(R.raw.classes)
+        val rd: Reader = BufferedReader(InputStreamReader(raw))
+        val gson = Gson()
+        return gson.fromJson(rd, ClassesResponse::class.java)
+        */
+        return remoteDataSource.getClasses()
     }
 
 }

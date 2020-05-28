@@ -2,6 +2,8 @@ package com.vjapp.writest.data.repository.datasource
 
 import com.vjapp.writest.data.exceptions.NetworkCommunicationException
 import com.vjapp.writest.data.exceptions.UploadFilesException
+import com.vjapp.writest.data.model.ClassesResponse
+import com.vjapp.writest.data.model.SchoolsResponse
 import com.vjapp.writest.data.model.UploadFilesRequest
 import com.vjapp.writest.data.model.UploadFilesResponse
 import com.vjapp.writest.data.remote.AppService
@@ -11,22 +13,23 @@ import okhttp3.RequestBody
 import java.io.File
 import java.net.URLConnection
 
+
 class RemoteDataSource(
     private val appService: AppService
 ) {
-    fun getToken():String {
-        val resp =  appService.getToken().execute();
-        val result:String
+    fun getToken(): String {
+        val resp = appService.getToken().execute();
+        val result: String
 
         if (resp.isSuccessful)
-           result= resp.body().toString()
+            result = resp.body().toString()
         else
-           result = ""
+            result = ""
 
         return result
     }
 
-    fun sendFiles():Boolean {
+    fun sendFiles(): Boolean {
         //call to appService.sendFiles...
         return true
     }
@@ -37,7 +40,7 @@ class RemoteDataSource(
         return result.body().toString()
     }
 
-    suspend fun uploadFilesToServer( uploadFilesRequest: UploadFilesRequest): UploadFilesResponse {
+    suspend fun uploadFilesToServer(uploadFilesRequest: UploadFilesRequest): UploadFilesResponse {
 
         val body1 = getMultiPartFromPath(uploadFilesRequest.fileImgPath)
         val body2 = getMultiPartFromPath(uploadFilesRequest.fileVideoPath)
@@ -67,16 +70,32 @@ class RemoteDataSource(
         return body
     }
 
-    suspend fun loginAuthentication(username: String, password: String):Boolean {
+    suspend fun loginAuthentication(username: String, password: String): Boolean {
         val response = appService.loginAuthentication(username, password)
-        if ((response.isSuccessful) && (response.body()?.esito=="OK")) return true
+        if ((response.isSuccessful) && (response.body()?.esito == "OK")) return true
         return false
     }
 
-    suspend fun userRegistration(username: String, password: String):Boolean {
-        val response = appService.userRegistration(username, password)
-        if ((response.isSuccessful) && (response.body()?.esito=="OK")) return true
-        return false
+    suspend fun userRegistration(username: String, password: String): Boolean {
+       val response = appService.userRegistration(username, password)
+       if ((response.isSuccessful) && (response.body()?.esito == "OK")) return true
+       return false
+    }
+
+    suspend fun getSchools():SchoolsResponse {
+        val response =appService.getSchools()
+        if ((response.isSuccessful) && (response.body()?.schoolList!=null))
+            return response.body() as SchoolsResponse
+        else
+            throw NetworkCommunicationException()
+    }
+
+    suspend fun getClasses():ClassesResponse {
+        val response =appService.getClasses()
+        if ((response.isSuccessful) && (response.body()?.classList!=null))
+            return response.body() as ClassesResponse
+        else
+            throw NetworkCommunicationException()
     }
 
 }

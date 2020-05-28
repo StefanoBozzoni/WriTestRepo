@@ -6,8 +6,8 @@
     <string name="cancel_ui_str">Annulla</string>
     <string name="goOn_str">Ok</string>
     <string name="question_delete_confirm_str">Vuoi scegliere un altro file ?</string>
-    <string name="inserisci_la_tua_password"><font size="17">inserisci la tua password</font></string>
-    <string name="inserisci_la_tua_email"><font size= "17">inserisci la tua email</font></string>
+    <string name="inserisci_la_tua_password">inserisci la tua password</string>
+    <string name="inserisci_la_tua_email">inserisci la tua email</string>
     <string name="scegli_una_password"><font size= "17">scegli una password</font></string>
 
 </resources>

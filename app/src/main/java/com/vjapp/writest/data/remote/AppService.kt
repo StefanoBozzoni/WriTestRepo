@@ -1,8 +1,6 @@
 package com.vjapp.writest.data.remote
 
-import com.vjapp.writest.data.model.EsitoResponse
-import com.vjapp.writest.data.model.Resphttpbin
-import com.vjapp.writest.data.model.UploadFilesResponse
+import com.vjapp.writest.data.model.*
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Call
@@ -21,10 +19,11 @@ interface AppService {
     @GET("https://httpbin.org/get")
     suspend fun httpBinGetDemo(): Response<Resphttpbin>
 
-    /*
+    /* without suspending functions
     @GET("https://httpbin.org/get")
     fun httpBinGetDemo(): Call<Resphttpbin>
     */
+
     @Multipart
     @POST("https://localhost:8080/inviofiles")
     suspend fun uploadFilesToServer(
@@ -46,5 +45,11 @@ interface AppService {
         @Field("username") username : String,
         @Field("password") pswd     : String
     ): Response<EsitoResponse>
+
+    @GET("https://writest-f1f05.firebaseio.com/tabellaScuole.json")
+    suspend fun getSchools(): Response<SchoolsResponse>
+
+    @GET("https://writest-f1f05.firebaseio.com/tabellaClassi.json")
+    suspend fun getClasses(): Response<ClassesResponse>
 
 }

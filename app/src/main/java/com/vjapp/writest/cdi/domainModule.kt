@@ -1,9 +1,7 @@
 package com.vjapp.writest.cdi
 
-import com.vjapp.writest.domain.interctor.UseCaseGetFileNameFromCursor
-import com.vjapp.writest.domain.interctor.UseCaseGetFilePathFromUri
-import com.vjapp.writest.domain.interctor.UseCaseGetToken
-import com.vjapp.writest.domain.interctor.UseCaseHttpBinDemo
+import com.vjapp.writest.domain.IRepository
+import com.vjapp.writest.domain.interctor.*
 import org.koin.dsl.module.module
 
 val domainModule = module {
@@ -11,4 +9,7 @@ val domainModule = module {
     factory { UseCaseHttpBinDemo(get()) }
     factory { UseCaseGetFilePathFromUri(get()) }
     factory { UseCaseGetFileNameFromCursor(get()) }
+    factory { UseCaseUploadFiles(get()) }
+    factory { UseCaseGetSchools(get()) }
+    factory { UseCaseGetClasses(get()) }
 }

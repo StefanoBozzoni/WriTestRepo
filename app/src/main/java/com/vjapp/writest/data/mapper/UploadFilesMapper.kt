@@ -1,4 +1,4 @@
-package com.vjapp.writest.data.mpper
+package com.vjapp.writest.data.mapper
 
 import com.vjapp.writest.data.model.UploadFilesRequest
 import com.vjapp.writest.data.model.UploadFilesResponse
