@@ -30,14 +30,25 @@ android {
         signingConfig signingConfigs.debug
     }
     buildTypes {
-            release {
-                minifyEnabled false
-                proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            }
-            debug {
-                applicationIdSuffix ".debug"
-                debuggable true
-            }
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            applicationIdSuffix ".debug"
+            debuggable true
+        }
+    }
+// To inline the bytecode built with JVM target 1.8 into
+// bytecode that is being built with JVM target 1.6. (e.g. navArgs)
+
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = "1.8"
     }
 }
 
@@ -67,5 +78,9 @@ dependencies {
     api "com.squareup.retrofit2:converter-scalars:${libVersions.retrofit}"
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 
+    //implementation 'androidx.navigation:navigation-fragment-ktx:2.2.2'
+    //implementation 'androidx.navigation:navigation-ui-ktx:2.2.2'
+
+    implementation 'com.google.firebase:firebase-storage-ktx:19.1.1'
 
 }

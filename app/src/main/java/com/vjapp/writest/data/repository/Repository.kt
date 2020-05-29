@@ -13,6 +13,7 @@ import com.vjapp.writest.data.model.UploadFilesResponse
 import com.vjapp.writest.data.repository.datasource.RemoteDataSource
 import com.vjapp.writest.domain.IRepository
 import java.io.*
+import java.lang.Exception
 
 class Repository(private val remoteDataSource: RemoteDataSource, private val context: Context): IRepository {
     override fun getToken(): String {
@@ -76,7 +77,7 @@ class Repository(private val remoteDataSource: RemoteDataSource, private val con
 
             file = File.createTempFile(
                 File(outPutFileName).nameWithoutExtension,
-                File(outPutFileName).absoluteFile.extension,
+                "."+File(outPutFileName).absoluteFile.extension,
                 outputDir
             )
 
@@ -87,10 +88,10 @@ class Repository(private val remoteDataSource: RemoteDataSource, private val con
                 outputStream.flush()
             }
         }
-
-        if (uri.toString().startsWith("content://")) {
+        else if (uri.toString().startsWith("file://")) {
             file = File(uri.path)
         }
+        else throw Exception("Invalid file uri type in getFilePathFromUri")
 
         return file
     }

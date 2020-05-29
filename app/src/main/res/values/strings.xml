@@ -8,6 +8,16 @@
     <string name="question_delete_confirm_str">Vuoi scegliere un altro file ?</string>
     <string name="inserisci_la_tua_password">inserisci la tua password</string>
     <string name="inserisci_la_tua_email">inserisci la tua email</string>
-    <string name="scegli_una_password"><font size= "17">scegli una password</font></string>
+    <string name="scegli_una_password"><font size="17">scegli una password</font></string>
+    <string name="title_activity_main">MainActivity</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string name="info_scheda_invio">Informazioni: \nCon il pulsante \'Nuovo Invio\' è possibile inviare una immagine ed un video per una diagnosi automatica della disgrafia. E\' possibile scegliere immagini e video dalla memoria del dispositivo (galleria, cloud ecc...) oppure, alternativamente, è possibile scattare una foto e registrare un video da inviare. L\'immagine deve rappresentare una fotografia del foglio del test, il video la registrazione della postura dell\'individuo durante l\'esecuzione del test.</string>
 
 </resources>

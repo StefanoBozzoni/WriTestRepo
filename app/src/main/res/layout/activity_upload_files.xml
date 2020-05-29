@@ -3,345 +3,354 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <com.vjapp.writest.components.ViewFlipperEng
+            android:id="@+id/mainViewFlipper"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="@dimen/medium_padding">
+            app:displayedChild="0">
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="@dimen/medium_padding">
+            <ProgressBar
+                    android:id="@+id/progress"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="visible"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:visibility="visible" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="@dimen/medium_padding">
 
             <TextView
                     android:id="@+id/tvInfotext"
-                    android:elevation="5dp"
                     android:layout_width="match_parent"
-                    android:layout_height="100dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/normal_margin"
                     android:layout_marginTop="@dimen/large_margin"
                     android:layout_marginEnd="@dimen/normal_margin"
                     android:clickable="false"
+                    android:elevation="5dp"
                     android:justificationMode="inter_word"
-                    android:autofillHints=""
-                    android:scrollbars="vertical"
-                    android:overScrollMode="always"
-                    android:inputType="none"
-                    android:text="Da questa scheda è possibile inviare una immagine ed un video per una diagnosi automatica della disgrafia. E' possibile scegliere immagini e video dalla memoria del dispositivo (galleria, cloud ecc...) oppure, alternativamente, è possibile scattare una foto e registrare un video da inviare. L'immagine deve rappresentare una fotografia del foglio del test, il video la registrazione della postura dell'individuo durante l'esecuzione del test."
+                    android:text=""
                     android:textColor="@android:color/holo_purple"
                     android:textSize="@dimen/large_text_size"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-                android:id="@+id/lblToken"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/large_margin"
-                android:paddingLeft="4dp"
-                android:paddingRight="4dp"
-                android:textSize="@dimen/large_text_size"
-                android:text="Token da riportare sul foglio di test:"
-                android:textColor="?android:textColorPrimary"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tvInfotext" />
-
-        <TextView
-                android:id="@+id/tvToken"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingLeft="4dp"
-                android:paddingRight="4dp"
-                android:textSize="@dimen/xlarge_text_size"
-                android:textColor="?android:textColorPrimary"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/lblToken" />
-
-
-        <TextView
-                android:id="@+id/lblScuola"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/medium_margin"
-                android:paddingLeft="4dp"
-                android:paddingRight="4dp"
-                android:textSize="@dimen/large_text_size"
-                android:text="Scuola"
-                android:textColor="?android:textColorPrimary"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tvToken" />
-
-        <Spinner
-                android:id="@+id/sp_scuola"
-                style="@style/Widget.AppCompat.Spinner.Underlined"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Scuola di provenienza"
-                android:textSize="@dimen/large_text_size"
-                android:maxLength="50"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/lblScuola" />
-
-
-        <TextView
-                android:id="@+id/lblClasse"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingLeft="4dp"
-                android:paddingRight="4dp"
-                android:layout_marginTop="@dimen/medium_margin"
-                android:text="Classe"
-                android:textSize="@dimen/large_text_size"
-                android:textColor="?android:textColorPrimary"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/sp_scuola" />
-
-        <Spinner
-                android:id="@+id/sp_classe"
-                style="@style/Widget.AppCompat.Spinner.Underlined"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="classe di appartenenza"
-                android:textSize="@dimen/large_text_size"
-                android:maxLength="50"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/lblClasse" />
-
-
-        <com.vjapp.writest.components.ViewFlipperEng
-                android:id="@+id/viewFlipper"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:focusable="true"
-                android:focusableInTouchMode="true"
-                app:displayedChild="0"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/sp_classe">
-
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <TextView
+                    android:id="@+id/lblToken"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:clipToPadding="false"
-                    android:paddingBottom="@dimen/large_padding">
+                    android:layout_marginTop="@dimen/large_margin"
+                    android:paddingLeft="4dp"
+                    android:paddingRight="4dp"
+                    android:text="Token da riportare sul foglio di test:"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="@dimen/large_text_size"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tvInfotext" />
 
-                <TextView
-                        android:id="@+id/btn_add_photo"
-                        style="@style/Base.Labels.PrimaryColor.Bold"
-                        android:layout_width="0dp"
-                        android:layout_height="54dp"
-                        android:layout_marginStart="@dimen/normal_margin"
-                        android:layout_marginTop="@dimen/xlarge_margin"
-                        android:layout_marginEnd="@dimen/medium_margin"
-                        android:background="@drawable/small_round_corners"
-                        android:clickable="true"
-                        android:drawableStart="@drawable/documenti_body_aggiungi_pulsante_c_scatta_foto"
-                        android:elevation="2dp"
-                        android:focusable="true"
-                        android:foreground="@drawable/ripple_effect"
-                        android:gravity="center|start"
-                        android:maxLines="2"
-                        android:padding="@dimen/small_padding"
-                        android:text="@string/label_take_photo_str"
-                        app:layout_constraintEnd_toStartOf="@+id/btn_addFile"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                <TextView
-                        android:id="@+id/btn_addFile"
-                        style="@style/Base.Labels.PrimaryColor.Bold"
-                        android:layout_width="0dp"
-                        android:layout_height="54dp"
-                        android:layout_marginStart="@dimen/medium_margin"
-                        android:layout_marginEnd="@dimen/normal_margin"
-                        android:background="@drawable/small_round_corners"
-                        android:clickable="true"
-                        android:drawableStart="@drawable/documenti_accordion_pulsante_c_salva"
-                        android:elevation="2dp"
-                        android:focusable="true"
-                        android:foreground="@drawable/ripple_effect"
-                        android:gravity="center|start"
-                        android:maxLines="2"
-                        android:padding="@dimen/small_padding"
-                        android:text="@string/choose_file_from_phone_str"
-                        app:layout_constraintBottom_toBottomOf="@+id/btn_add_photo"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/btn_add_photo"
-                        app:layout_constraintTop_toTopOf="@+id/btn_add_photo" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                <ImageView
-                        android:id="@+id/btn_cancelFile"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginEnd="32dp"
-                        android:importantForAccessibility="no"
-                        app:layout_constraintBottom_toBottomOf="@+id/tv_nomefile"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintHorizontal_bias="0.5"
-                        app:layout_constraintStart_toEndOf="@+id/tv_nomefile"
-                        app:layout_constraintTop_toTopOf="@+id/tv_nomefile"
-                        app:srcCompat="@drawable/documenti_accordion_pulsante_c_cancella" />
-
-                <TextView
-                        android:id="@+id/tv_nomefile"
-                        android:layout_width="240dp"
-                        android:layout_height="60dp"
-                        android:layout_marginStart="32dp"
-                        android:layout_marginTop="48dp"
-                        android:background="@drawable/small_round_corners"
-                        android:drawableStart="@drawable/documenti_body_icona_b_doc_aggiunti_da_te"
-                        android:gravity="center"
-                        android:textColor="@color/colorPrimary"
-                        android:textStyle="bold"
-                        app:layout_constraintEnd_toStartOf="@+id/btn_cancelFile"
-                        app:layout_constraintHorizontal_bias="0.5"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        tools:text="Nome_del_file_da_inviare.jpg" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-        </com.vjapp.writest.components.ViewFlipperEng>
-
-
-        <com.vjapp.writest.components.ViewFlipperEng
-                android:id="@+id/viewFlipper2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:focusable="true"
-                android:focusableInTouchMode="true"
-                app:displayedChild="0"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/viewFlipper">
-
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <TextView
+                    android:id="@+id/tvToken"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:clipToPadding="false"
-                    android:paddingBottom="@dimen/xlarge_margin">
-
-                <TextView
-                        android:id="@+id/btn_add_photo2"
-                        style="@style/Base.Labels.PrimaryColor.Bold"
-                        android:layout_width="0dp"
-                        android:layout_height="54dp"
-                        android:layout_marginStart="@dimen/normal_margin"
-                        android:layout_marginTop="@dimen/xlarge_margin"
-                        android:layout_marginEnd="@dimen/medium_margin"
-                        android:background="@drawable/small_round_corners"
-                        android:clickable="true"
-                        android:drawableStart="@drawable/ic_film"
-                        android:drawablePadding="@dimen/small_padding"
-                        android:elevation="2dp"
-                        android:focusable="true"
-                        android:foreground="@drawable/ripple_effect"
-                        android:gravity="center|start"
-                        android:maxLines="2"
-                        android:paddingStart="@dimen/normal_padding"
-                        android:text="registra un video"
-                        app:layout_constraintEnd_toStartOf="@+id/btn_addFile2"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                <TextView
-                        android:id="@+id/btn_addFile2"
-                        style="@style/Base.Labels.PrimaryColor.Bold"
-                        android:layout_width="0dp"
-                        android:layout_height="54dp"
-                        android:layout_marginStart="@dimen/medium_margin"
-                        android:layout_marginEnd="@dimen/normal_margin"
-                        android:background="@drawable/small_round_corners"
-                        android:clickable="true"
-                        android:drawableStart="@drawable/documenti_accordion_pulsante_c_salva"
-                        android:elevation="2dp"
-                        android:focusable="true"
-                        android:foreground="@drawable/ripple_effect"
-                        android:gravity="center|start"
-                        android:maxLines="2"
-                        android:padding="@dimen/small_padding"
-                        android:text="@string/choose_file_from_phone_str"
-                        app:layout_constraintBottom_toBottomOf="@+id/btn_add_photo2"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/btn_add_photo2"
-                        app:layout_constraintTop_toTopOf="@+id/btn_add_photo2" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                    android:paddingLeft="4dp"
+                    android:paddingRight="4dp"
+                    android:textColor="?android:textColorPrimary"
+                    android:textSize="@dimen/xlarge_text_size"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/lblToken" />
 
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <TextView
+                    android:id="@+id/lblScuola"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/medium_margin"
+                    android:paddingLeft="4dp"
+                    android:paddingRight="4dp"
+                    android:text="Scuola"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="@dimen/large_text_size"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tvToken" />
 
-                <ImageView
-                        android:id="@+id/btn_cancelFile2"
-                        android:layout_width="wrap_content"
+            <Spinner
+                    android:id="@+id/sp_scuola"
+                    style="@style/Widget.AppCompat.Spinner.Underlined"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Scuola di provenienza"
+                    android:maxLength="50"
+                    android:textSize="@dimen/large_text_size"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/lblScuola" />
+
+
+            <TextView
+                    android:id="@+id/lblClasse"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/medium_margin"
+                    android:paddingLeft="4dp"
+                    android:paddingRight="4dp"
+                    android:text="Classe"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="@dimen/large_text_size"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/sp_scuola" />
+
+            <Spinner
+                    android:id="@+id/sp_classe"
+                    style="@style/Widget.AppCompat.Spinner.Underlined"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="classe di appartenenza"
+                    android:maxLength="50"
+                    android:textSize="@dimen/large_text_size"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/lblClasse" />
+
+
+            <com.vjapp.writest.components.ViewFlipperEng
+                    android:id="@+id/viewFlipper"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    app:displayedChild="0"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/sp_classe">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginEnd="32dp"
-                        android:importantForAccessibility="no"
-                        app:layout_constraintBottom_toBottomOf="@+id/tv_nomefile2"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintHorizontal_bias="0.5"
-                        app:layout_constraintStart_toEndOf="@+id/tv_nomefile2"
-                        app:layout_constraintTop_toTopOf="@+id/tv_nomefile2"
-                        app:srcCompat="@drawable/documenti_accordion_pulsante_c_cancella" />
+                        android:clipToPadding="false"
+                        android:paddingBottom="@dimen/large_padding">
 
-                <TextView
-                        android:id="@+id/tv_nomefile2"
-                        android:layout_width="240dp"
-                        android:layout_height="60dp"
-                        android:layout_marginStart="32dp"
-                        android:layout_marginTop="48dp"
-                        android:background="@drawable/small_round_corners"
-                        android:drawableStart="@drawable/documenti_body_icona_b_doc_aggiunti_da_te"
-                        android:gravity="center"
-                        android:textColor="@color/colorPrimary"
-                        android:textStyle="bold"
-                        app:layout_constraintEnd_toStartOf="@+id/btn_cancelFile2"
-                        app:layout_constraintHorizontal_bias="0.5"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        tools:text="Nome_del_file_da_inviare.mp4" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </com.vjapp.writest.components.ViewFlipperEng>
+                    <TextView
+                            android:id="@+id/btn_add_photo"
+                            style="@style/Base.Labels.PrimaryColor.Bold"
+                            android:layout_width="0dp"
+                            android:layout_height="54dp"
+                            android:layout_marginStart="@dimen/normal_margin"
+                            android:layout_marginTop="@dimen/xlarge_margin"
+                            android:layout_marginEnd="@dimen/medium_margin"
+                            android:background="@drawable/small_round_corners"
+                            android:clickable="true"
+                            android:drawableStart="@drawable/documenti_body_aggiungi_pulsante_c_scatta_foto"
+                            android:elevation="2dp"
+                            android:focusable="true"
+                            android:foreground="@drawable/ripple_effect"
+                            android:gravity="center|start"
+                            android:maxLines="2"
+                            android:padding="@dimen/small_padding"
+                            android:text="@string/label_take_photo_str"
+                            app:layout_constraintEnd_toStartOf="@+id/btn_addFile"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
 
-        <Button
-                android:id="@+id/btnSendFiles"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/large_margin"
-                android:background="@drawable/round_button_active_effect_primarycolor"
-                android:enabled="false"
-                android:foreground="@drawable/ripple_effect"
-                android:paddingStart="@dimen/xlarge_padding"
-                android:paddingEnd="@dimen/xlarge_padding"
-                android:text="Invia Files"
-                android:textAllCaps="false"
-                android:textColor="@color/white"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/viewFlipper2" />
+                    <TextView
+                            android:id="@+id/btn_addFile"
+                            style="@style/Base.Labels.PrimaryColor.Bold"
+                            android:layout_width="0dp"
+                            android:layout_height="54dp"
+                            android:layout_marginStart="@dimen/medium_margin"
+                            android:layout_marginEnd="@dimen/normal_margin"
+                            android:background="@drawable/small_round_corners"
+                            android:clickable="true"
+                            android:drawableStart="@drawable/documenti_accordion_pulsante_c_salva"
+                            android:elevation="2dp"
+                            android:focusable="true"
+                            android:foreground="@drawable/ripple_effect"
+                            android:gravity="center|start"
+                            android:maxLines="2"
+                            android:padding="@dimen/small_padding"
+                            android:text="@string/choose_file_from_phone_str"
+                            app:layout_constraintBottom_toBottomOf="@+id/btn_add_photo"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/btn_add_photo"
+                            app:layout_constraintTop_toTopOf="@+id/btn_add_photo" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <ProgressBar
-                android:id="@+id/progress"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/btnSendFiles"
-                tools:visibility="visible" />
+                <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+                    <ImageView
+                            android:id="@+id/btn_cancelFile"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginEnd="32dp"
+                            android:importantForAccessibility="no"
+                            app:layout_constraintBottom_toBottomOf="@+id/tv_nomefile"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0.5"
+                            app:layout_constraintStart_toEndOf="@+id/tv_nomefile"
+                            app:layout_constraintTop_toTopOf="@+id/tv_nomefile"
+                            app:srcCompat="@drawable/documenti_accordion_pulsante_c_cancella" />
+
+                    <TextView
+                            android:id="@+id/tv_nomefile"
+                            android:layout_width="240dp"
+                            android:layout_height="60dp"
+                            android:layout_marginStart="32dp"
+                            android:layout_marginTop="48dp"
+                            android:background="@drawable/small_round_corners"
+                            android:drawableStart="@drawable/documenti_body_icona_b_doc_aggiunti_da_te"
+                            android:gravity="center"
+                            android:textColor="@color/colorPrimary"
+                            android:textStyle="bold"
+                            app:layout_constraintEnd_toStartOf="@+id/btn_cancelFile"
+                            app:layout_constraintHorizontal_bias="0.5"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            tools:text="Nome_del_file_da_inviare.jpg" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </com.vjapp.writest.components.ViewFlipperEng>
+
+
+            <com.vjapp.writest.components.ViewFlipperEng
+                    android:id="@+id/viewFlipper2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    app:displayedChild="0"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/viewFlipper">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clipToPadding="false"
+                        android:paddingBottom="@dimen/xlarge_margin">
+
+                    <TextView
+                            android:id="@+id/btn_add_photo2"
+                            style="@style/Base.Labels.PrimaryColor.Bold"
+                            android:layout_width="0dp"
+                            android:layout_height="54dp"
+                            android:layout_marginStart="@dimen/normal_margin"
+                            android:layout_marginTop="@dimen/xlarge_margin"
+                            android:layout_marginEnd="@dimen/medium_margin"
+                            android:background="@drawable/small_round_corners"
+                            android:clickable="true"
+                            android:drawableStart="@drawable/ic_film"
+                            android:drawablePadding="@dimen/small_padding"
+                            android:elevation="2dp"
+                            android:focusable="true"
+                            android:foreground="@drawable/ripple_effect"
+                            android:gravity="center|start"
+                            android:maxLines="2"
+                            android:paddingStart="@dimen/normal_padding"
+                            android:text="registra un video"
+                            app:layout_constraintEnd_toStartOf="@+id/btn_addFile2"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                            android:id="@+id/btn_addFile2"
+                            style="@style/Base.Labels.PrimaryColor.Bold"
+                            android:layout_width="0dp"
+                            android:layout_height="54dp"
+                            android:layout_marginStart="@dimen/medium_margin"
+                            android:layout_marginEnd="@dimen/normal_margin"
+                            android:background="@drawable/small_round_corners"
+                            android:clickable="true"
+                            android:drawableStart="@drawable/documenti_accordion_pulsante_c_salva"
+                            android:elevation="2dp"
+                            android:focusable="true"
+                            android:foreground="@drawable/ripple_effect"
+                            android:gravity="center|start"
+                            android:maxLines="2"
+                            android:padding="@dimen/small_padding"
+                            android:text="@string/choose_file_from_phone_str"
+                            app:layout_constraintBottom_toBottomOf="@+id/btn_add_photo2"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/btn_add_photo2"
+                            app:layout_constraintTop_toTopOf="@+id/btn_add_photo2" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                    <ImageView
+                            android:id="@+id/btn_cancelFile2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginEnd="32dp"
+                            android:importantForAccessibility="no"
+                            app:layout_constraintBottom_toBottomOf="@+id/tv_nomefile2"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0.5"
+                            app:layout_constraintStart_toEndOf="@+id/tv_nomefile2"
+                            app:layout_constraintTop_toTopOf="@+id/tv_nomefile2"
+                            app:srcCompat="@drawable/documenti_accordion_pulsante_c_cancella" />
+
+                    <TextView
+                            android:id="@+id/tv_nomefile2"
+                            android:layout_width="240dp"
+                            android:layout_height="60dp"
+                            android:layout_marginStart="32dp"
+                            android:layout_marginTop="48dp"
+                            android:background="@drawable/small_round_corners"
+                            android:drawableStart="@drawable/documenti_body_icona_b_doc_aggiunti_da_te"
+                            android:gravity="center"
+                            android:textColor="@color/colorPrimary"
+                            android:textStyle="bold"
+                            app:layout_constraintEnd_toStartOf="@+id/btn_cancelFile2"
+                            app:layout_constraintHorizontal_bias="0.5"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            tools:text="Nome_del_file_da_inviare.mp4" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </com.vjapp.writest.components.ViewFlipperEng>
+
+            <Button
+                    android:id="@+id/btnSendFiles"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/large_margin"
+                    android:background="@drawable/round_button_active_effect_primarycolor"
+                    android:enabled="false"
+                    android:foreground="@drawable/ripple_effect"
+                    android:paddingStart="@dimen/xlarge_padding"
+                    android:paddingEnd="@dimen/xlarge_padding"
+                    android:text="Invia Files"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/viewFlipper2" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.vjapp.writest.components.ViewFlipperEng>
+
 </ScrollView>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context="com.vjapp.writest.MainActivity">
+
+    <TextView
+            android:id="@+id/tvInfotext"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/normal_margin"
+            android:layout_marginTop="@dimen/large_margin"
+            android:layout_marginEnd="@dimen/normal_margin"
+            android:autofillHints=""
+            android:clickable="false"
+            android:drawableTop="@drawable/ic_info"
+            android:elevation="5dp"
+            android:inputType="none"
+            android:justificationMode="inter_word"
+            android:text="@string/info_scheda_invio"
+            android:textColor="@color/blue_900"
+            android:textSize="20dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+            android:id="@+id/btnNuovoInvio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/xxxlarge_margin"
+            android:text="Nuovo Invio"
+            android:paddingHorizontal="@dimen/xlarge_padding"
+            android:background="@drawable/round_button_active_effect_primarycolor"
+            android:foreground="@drawable/ripple_effect"
+            android:textColor="@color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvInfotext" />
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -8,7 +8,7 @@
     <uses-permission android:name="android.permission.CAMERA" />
 
     <application
-            android:name="com.vjapp.writest.UploadFilesApplication"
+            android:name=".UploadFilesApplication"
             android:allowBackup="false"
             android:icon="@mipmap/ic_launcher"
             android:label="@string/app_name"
@@ -17,23 +17,24 @@
             android:theme="@style/AppTheme"
             tools:ignore="GoogleAppIndexingWarning">
 
-        <activity
-                android:name="com.vjapp.writest.LoginActivity"
-                android:screenOrientation="nosensor">
-
-        </activity>
-
-        <activity android:name=".UploadFilesActivity">
+        <activity android:name=".MainActivity">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name   = "android.intent.action.MAIN" />
+                <category android:name = "android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <activity android:name="com.vjapp.writest.PinActivity" />
+        <activity
+                android:name=".LoginActivity"
+                android:screenOrientation="nosensor" />
+
+        <activity
+                android:name=".UploadFilesActivity"
+                android:screenOrientation="nosensor">
+        </activity>
 
         <provider
-                android:name="com.vjapp.writest.GenericFileProvider"
+                android:name=".GenericFileProvider"
                 android:authorities="${applicationId}.fileprovider"
                 android:exported="false"
                 android:grantUriPermissions="true">
@@ -41,7 +42,6 @@
                     android:name="android.support.FILE_PROVIDER_PATHS"
                     android:resource="@xml/provider_paths" />
         </provider>
-
     </application>
 
 </manifest>

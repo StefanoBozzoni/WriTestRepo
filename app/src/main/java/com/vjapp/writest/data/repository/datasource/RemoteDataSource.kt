@@ -7,6 +7,7 @@ import com.vjapp.writest.data.model.SchoolsResponse
 import com.vjapp.writest.data.model.UploadFilesRequest
 import com.vjapp.writest.data.model.UploadFilesResponse
 import com.vjapp.writest.data.remote.AppService
+import kotlinx.coroutines.coroutineScope
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -42,23 +43,27 @@ class RemoteDataSource(
 
     suspend fun uploadFilesToServer(uploadFilesRequest: UploadFilesRequest): UploadFilesResponse {
 
-        val body1 = getMultiPartFromPath(uploadFilesRequest.fileImgPath)
-        val body2 = getMultiPartFromPath(uploadFilesRequest.fileVideoPath)
-        val token = RequestBody.create(okhttp3.MultipartBody.FORM, uploadFilesRequest.token)
+            val body1 = getMultiPartFromPath(uploadFilesRequest.fileImgPath)
+            val body2 = getMultiPartFromPath(uploadFilesRequest.fileVideoPath)
+            val token = RequestBody.create(okhttp3.MultipartBody.FORM, uploadFilesRequest.token)
 
-        //val token = uploadContractServiceRequest.token
-        val response = appService.uploadFilesToServer(body1, body2, token)
+            //val token = uploadContractServiceRequest.token
+            val response = try {
+                appService.uploadFilesToServer(body1, body2, token)
+            } catch (t: Throwable) {
+                throw NetworkCommunicationException()
+            }
 
-        if (response.isSuccessful) {
-            val responseBody = response.body()
-            responseBody?.apply {
-                when (esito) {
-                    "OK" -> return this
-                    else -> throw UploadFilesException()
+            if (response.isSuccessful) {
+                val responseBody = response.body()
+                responseBody?.apply {
+                    when (esito) {
+                        "OK" -> return this
+                        else -> throw UploadFilesException()
+                    }
                 }
             }
-        }
-        throw NetworkCommunicationException()
+            throw NetworkCommunicationException()
     }
 
     fun getMultiPartFromPath(filepath: String): MultipartBody.Part {
