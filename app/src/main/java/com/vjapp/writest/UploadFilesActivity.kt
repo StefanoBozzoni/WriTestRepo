@@ -25,6 +25,7 @@ import com.vjapp.writest.components.VJDialog
 import com.vjapp.writest.data.model.ClassesResponse
 import com.vjapp.writest.data.model.SchoolsResponse
 import com.vjapp.writest.domain.model.UploadFilesRequestEntity
+import com.vjapp.writest.domain.model.UploadFilesResponseEntity
 import com.vjapp.writest.presentation.Resource
 import com.vjapp.writest.presentation.ResourceState
 import com.vjapp.writest.presentation.SendFilesViewModel
@@ -44,13 +45,14 @@ class UploadFilesActivity : AppCompatActivity(), CoroutineScope {
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job
     private lateinit var job: Job
-    lateinit var sharedpreferences: SharedPreferences
     lateinit var mToken: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_upload_files)
         job = Job()
+
+        sendAssetsVM.init()
 
         btn_addFile.setOnClickListener { btnChoosePhotoFile() }
         btn_addFile2.setOnClickListener { btnChooseVideoFile() }
@@ -62,11 +64,11 @@ class UploadFilesActivity : AppCompatActivity(), CoroutineScope {
         checkEnableButton()
         val randomUUID = UUID.randomUUID().toString()
 
-        sharedpreferences = getSharedPreferences("WritestPref", Context.MODE_PRIVATE)
+        //sendAssetsVM.init()
 
-        val savedToken = sharedpreferences.getString("token", "")
+        val savedToken = sendAssetsVM.sharedpreferences.getString("token", "")
         if (savedToken?.isEmpty() ?: false) {
-            val editor = sharedpreferences.edit()
+            val editor = sendAssetsVM.sharedpreferences.edit()
             tvToken.text = randomUUID
             editor.putString("token", tvToken.text.toString())
             editor.apply()
@@ -100,7 +102,6 @@ class UploadFilesActivity : AppCompatActivity(), CoroutineScope {
         //sendAssetsVM.httpBinDemo()
 
     }
-
 
     override fun onSupportNavigateUp(): Boolean {
         onBackPressed()
@@ -167,7 +168,7 @@ class UploadFilesActivity : AppCompatActivity(), CoroutineScope {
         Log.d("RISULTATO", resp)
     }
 
-    private fun handleSendFileComplete(resource: Resource<Any>) {
+    private fun handleSendFileComplete(resource: Resource<UploadFilesResponseEntity>) {
 
         if (resource.status == ResourceState.LOADING) {
             mainViewFlipper.displayedChild = 0

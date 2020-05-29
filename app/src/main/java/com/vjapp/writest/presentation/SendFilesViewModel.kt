@@ -1,27 +1,21 @@
 package com.vjapp.writest.presentation
 
-import android.app.AlertDialog
+import android.content.Context
 import android.content.SharedPreferences
 import android.net.Uri
-import android.provider.Contacts
 import android.util.Log
-import androidx.lifecycle.*
-import com.google.android.gms.common.config.GservicesValue.value
-import com.google.android.gms.tasks.Task
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.UploadTask
 import com.google.firebase.storage.ktx.storage
-import com.vjapp.writest.UploadFilesActivity
-import com.vjapp.writest.data.model.SchoolsResponse
-import com.vjapp.writest.data.model.UploadFilesRequest
 import com.vjapp.writest.domain.interctor.*
 import com.vjapp.writest.domain.model.UploadFilesRequestEntity
 import com.vjapp.writest.domain.model.UploadFilesResponseEntity
-import kotlinx.android.synthetic.main.activity_upload_files.*
 import kotlinx.coroutines.*
+import org.koin.dsl.module.applicationContext
 import java.io.File
-import java.io.FileOutputStream
 import java.util.*
 
 class SendFilesViewModel(
@@ -31,7 +25,8 @@ class SendFilesViewModel(
     private val getFilePathUseCase: UseCaseGetFilePathFromUri,
     private val getFileNameUseCase: UseCaseGetFileNameFromCursor,
     private val getSchoolsUseCase: UseCaseGetSchools,
-    private val getClassesUseCase: UseCaseGetClasses
+    private val getClassesUseCase: UseCaseGetClasses,
+    private val context:Context
 ) : ViewModel() {
     lateinit var sharedpreferences: SharedPreferences
 
@@ -51,6 +46,10 @@ class SendFilesViewModel(
     var selectedVideoUri: Uri? = null
     var photoPage = 0
     var videoPage = 0
+
+    fun init() {
+        sharedpreferences = context.getSharedPreferences("WritestPref", Context.MODE_PRIVATE)
+    }
 
     /*
     fun httpBinDemo() {
@@ -91,31 +90,35 @@ class SendFilesViewModel(
     }
 
     fun getConfig() {
-        viewModelScope.launch(Dispatchers.Main) {
+        viewModelScope.launch(Dispatchers.IO) {
             try {
                 getConfigLivData.postValue(Resource.loading())
-                val schools = async(Dispatchers.IO) { getSchoolsUseCase.execute() }
-                val classes = async(Dispatchers.IO) { getClassesUseCase.execute() }
-                getConfigLivData.value = Resource.success(classes.await())
-                getConfigLivData.value = Resource.success(schools.await())
-            } catch (t:Throwable) {
-                getConfigLivData.value = Resource.error("Errore caricamento configurazione")
+                val schools = async { getSchoolsUseCase.execute() }
+                val classes = async { getClassesUseCase.execute() }
+                val classesResp = classes.await()
+                val schoolsResp = schools.await()
+                withContext(Dispatchers.Main) {
+                    getConfigLivData.value = Resource.success(classesResp)
+                    getConfigLivData.value = Resource.success(schoolsResp)
+                }
+            } catch (t: Throwable) {
+                getConfigLivData.postValue(Resource.error("Errore caricamento configurazione"))
             }
         }
     }
 
     fun uploadAllFilesUsingFirebaseStorage(token: String) {
-        viewModelScope.launch(Dispatchers.Main) {
+        viewModelScope.launch(Dispatchers.IO) {
             try {
                 coroutineScope {
-                    sendFilesLivData.value = Resource.loading()
-                    val uno = async(Dispatchers.IO) {
+                    sendFilesLivData.postValue(Resource.loading())
+                    val uno = async {
                         uploadSingleFileUsingFirebaseStorage(
                             selectedPhotoUri!!,
                             token
                         )
                     }
-                    val due = async(Dispatchers.IO) {
+                    val due = async {
                         uploadSingleFileUsingFirebaseStorage(
                             selectedVideoUri!!,
                             token
@@ -124,10 +127,10 @@ class SendFilesViewModel(
                     val x1 = uno.await()
                     val x2 = due.await()
                     val esito = UploadFilesResponseEntity(esito = x2.toString())
-                    sendFilesLivData.value = Resource.success(esito)
+                    sendFilesLivData.postValue(Resource.success(esito))
                 }
             } catch (t: Throwable) {
-                sendFilesLivData.value = Resource.error("Errore")
+                sendFilesLivData.postValue(Resource.error("Errore"))
             }
         }
     }
@@ -168,7 +171,7 @@ class SendFilesViewModel(
         return Tasks.await(myUploadTask!!)
     }
 
-    fun generateNewToken():String {
+    fun generateNewToken(): String {
         val randomUUID = UUID.randomUUID().toString()
         val editor = sharedpreferences.edit()
         editor.putString("token", randomUUID)

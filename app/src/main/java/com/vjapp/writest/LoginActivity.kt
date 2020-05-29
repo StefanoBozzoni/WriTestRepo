@@ -1,5 +1,6 @@
 package com.vjapp.writest
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.text.*
@@ -8,6 +9,7 @@ import android.util.Log
 import android.util.Patterns
 import android.view.View
 import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.AutoCompleteTextView
 import android.widget.Button
 import android.widget.TextView
@@ -274,10 +276,10 @@ class LoginActivity : AppCompatActivity() {
                     gotoMainActivity()
                 } else {
                     // If sign in fails, display a message to the user.
+                    showProgress(false)
                     tilPassword?.error = "Password non valida"
                     tvPassword?.requestFocus()
-
-                    showProgress(false)
+                    hideKeyboard(this)
                     /*
                     AlertDialog.Builder(this)
                         .setTitle("Autenticazione fallita")
@@ -336,6 +338,18 @@ class LoginActivity : AppCompatActivity() {
         val i = Intent(applicationContext, MainActivity::class.java )
         startActivity(i)
         finish()
+    }
+
+    fun hideKeyboard(activity: Activity) {
+        val imm: InputMethodManager =
+            activity.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+        //Find the currently focused view, so we can grab the correct window token from it.
+        var view = activity.currentFocus
+        //If no view currently has focus, create a new one, just so we can grab a window token from it
+        if (view == null) {
+            view = View(activity)
+        }
+        imm.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
 }
