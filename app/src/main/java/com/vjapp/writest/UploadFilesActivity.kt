@@ -21,8 +21,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.FileProvider
 import androidx.lifecycle.Observer
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.ktx.storage
 import com.vjapp.writest.components.VJDialog
 import com.vjapp.writest.data.model.ClassesResponse
 import com.vjapp.writest.data.model.SchoolsResponse
@@ -165,7 +163,6 @@ class UploadFilesActivity : AppCompatActivity(), CoroutineScope {
         }
     }
 
-
     private fun handlehttpResultData(resp: String) {
         Log.d("RISULTATO", resp)
     }
@@ -173,13 +170,13 @@ class UploadFilesActivity : AppCompatActivity(), CoroutineScope {
     private fun handleSendFileComplete(resource: Resource<Any>) {
 
         if (resource.status == ResourceState.LOADING) {
-            mainViewFlipper.displayedChild=0
+            mainViewFlipper.displayedChild = 0
         }
 
         if (resource.status == ResourceState.SUCCESS) {
-            //TODO Calcola il nuovo token
-            mainViewFlipper.displayedChild=1
+            mainViewFlipper.displayedChild = 1
 
+            sendAssetsVM.generateNewToken()
             AlertDialog.Builder(this)
                 .setTitle("Invio completato")
                 .setMessage("L'invio è stato completato con successo")
@@ -391,7 +388,7 @@ class UploadFilesActivity : AppCompatActivity(), CoroutineScope {
     }
 
     companion object {
-        private const val TAG = "UploadFiles"
+        const val TAG = "UploadFiles"
         const val PICK_FILE = 2
         const val PICK_FILE_VIDEO = 3
         const val PICK_PHOTO = 4

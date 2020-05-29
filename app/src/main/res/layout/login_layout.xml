@@ -4,9 +4,9 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/login_form"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical"
-        android:padding="@dimen/spacing_mlarge"
+        android:paddingHorizontal="@dimen/normal_padding"
         android:visibility="visible">
 
     <TextView
@@ -36,7 +36,7 @@
             android:paddingHorizontal="0dp"
             android:hint="@string/inserisci_la_tua_email"
             android:inputType="textEmailAddress|textAutoComplete"
-            android:maxLength="15"
+            android:maxLength="50"
             android:maxLines="1"
             android:singleLine="true"
             android:imeOptions="actionNext"

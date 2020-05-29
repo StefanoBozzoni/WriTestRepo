@@ -4,6 +4,9 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.appcompat.app.ActionBar
+import androidx.appcompat.app.AlertDialog
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -20,7 +23,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        onBackPressed()
+        AlertDialog.Builder(this)
+            .setTitle("Disconnettersi?")
+            .setMessage("Vuoi eseguire la disconnessione ed inserire la password al prossimo accesso ?")
+            .setPositiveButton("Esci") {dialog, which -> dialog.dismiss();finish() }
+            .setNegativeButton("Esci e disconnetti") {dialog, which -> Firebase.auth.signOut();dialog.dismiss();finish() }
+            .show()
+        //onBackPressed()
         return true
     }
 

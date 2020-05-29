@@ -1,6 +1,7 @@
 package com.vjapp.writest.presentation
 
 import android.app.AlertDialog
+import android.content.SharedPreferences
 import android.net.Uri
 import android.provider.Contacts
 import android.util.Log
@@ -17,9 +18,11 @@ import com.vjapp.writest.data.model.UploadFilesRequest
 import com.vjapp.writest.domain.interctor.*
 import com.vjapp.writest.domain.model.UploadFilesRequestEntity
 import com.vjapp.writest.domain.model.UploadFilesResponseEntity
+import kotlinx.android.synthetic.main.activity_upload_files.*
 import kotlinx.coroutines.*
 import java.io.File
 import java.io.FileOutputStream
+import java.util.*
 
 class SendFilesViewModel(
     private val getTokenUseCase: UseCaseGetToken,
@@ -30,6 +33,7 @@ class SendFilesViewModel(
     private val getSchoolsUseCase: UseCaseGetSchools,
     private val getClassesUseCase: UseCaseGetClasses
 ) : ViewModel() {
+    lateinit var sharedpreferences: SharedPreferences
 
     var sendFilesLivData = MutableLiveData<Resource<UploadFilesResponseEntity>>()
 
@@ -159,11 +163,17 @@ class SendFilesViewModel(
                 //broadcastUploadFinished(null, fileUri)
                 //showUploadFinishedNotification(null, fileUri)
             }
-
         }
 
         return Tasks.await(myUploadTask!!)
     }
 
+    fun generateNewToken():String {
+        val randomUUID = UUID.randomUUID().toString()
+        val editor = sharedpreferences.edit()
+        editor.putString("token", randomUUID)
+        editor.apply()
+        return randomUUID
+    }
 
 }
