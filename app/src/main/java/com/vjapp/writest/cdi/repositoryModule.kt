@@ -7,8 +7,7 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module.module
 
 val repositoryModule = module {
-
     factory { RemoteDataSourceFactory(get()) }
-    single { Repository(get(), androidContext()) as IRepository }
+    single { Repository(get(), get(), androidContext()) as IRepository }
 
 }

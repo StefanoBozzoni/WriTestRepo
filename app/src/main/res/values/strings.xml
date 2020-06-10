@@ -19,5 +19,19 @@
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
     <string name="info_scheda_invio">Informazioni: \nCon il pulsante \'Nuovo Invio\' è possibile inviare una immagine ed un video per una diagnosi automatica della disgrafia. E\' possibile scegliere immagini e video dalla memoria del dispositivo (galleria, cloud ecc...) oppure, alternativamente, è possibile scattare una foto e registrare un video da inviare. L\'immagine deve rappresentare una fotografia del foglio del test, il video la registrazione della postura dell\'individuo durante l\'esecuzione del test.</string>
+    <string name="mostra_immagine_str">Mostra Immagine</string>
+    <string name="errore_caricamento_dati_dalla_memoria_locale_str">Errore caricamento dati dalla memoria locale</string>
+    <string name="data_invio_str">Data Invio</string>
+    <string name="token_str">Token</string>
+    <string name="classe_str">Classe</string>
+    <string name="mostra_video">Mostra Video</string>
+    <string name="scuola_str">Scuola</string>
+    <string name="email_non_verificata_str">email non verificata</string>
+    <string name="verifica_email_necessaria_str">verifica email necessaria</string>
+    <string name="message_dialog_verifica_email_str">Per accedere devi confermare l\'email che ti è stata inviata.</string>
+    <string name="chiudi_str">Chiudi</string>
+    <string name="invio_completato_message_str">L\'invio è stato completato con successo</string>
+    <string name="invio_completato_title">Invio completato</string>
+    <string name="notification_message">notifica di WriTest app</string>
 
 </resources>

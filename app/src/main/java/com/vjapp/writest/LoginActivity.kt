@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.text.*
+import android.text.TextUtils.replace
 import android.text.style.RelativeSizeSpan
 import android.util.Log
 import android.util.Patterns
@@ -20,7 +21,10 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.vjapp.writest.domain.model.UserAccountsEntity
+import com.vjapp.writest.domain.utils.await
 import kotlinx.android.synthetic.main.login_layout.*
 
 
@@ -33,14 +37,6 @@ class LoginActivity : AppCompatActivity() {
         get() {
             return confirm_password_form.visibility == View.VISIBLE
         }
-
-    /*
-    private val isSignInMode: Boolean
-        get() {
-            return !isSignUpMode
-        }
-
-     */
 
     // UI references.
     private var mUserName: AutoCompleteTextView? = null
@@ -104,7 +100,6 @@ class LoginActivity : AppCompatActivity() {
             val strHint = getString(R.string.scegli_una_password)
             tvPassword.setHintAndReduceFontSize(strHint,0.9f)
 
-            Toast.makeText(this, "registrazione (da implementare)", Toast.LENGTH_SHORT).show()
             sign_up.text = "accedi"
             lblPrimoAccesso.text = "ti sei già registrato?"
             email_sign_in_button.text = "REGISTRATI"
@@ -272,8 +267,22 @@ class LoginActivity : AppCompatActivity() {
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     showProgress(false)
-                    //val user = auth.currentUser
-                    gotoMainActivity()
+                    val user = auth.currentUser
+                    if (!(user?.isEmailVerified?:false)) {
+                        Firebase.auth.signOut()
+                        tilPassword?.error = getString(R.string.email_non_verificata_str)
+                        tvPassword?.requestFocus()
+                        AlertDialog.Builder(this)
+                            .setTitle(getString(R.string.verifica_email_necessaria_str))
+                            .setMessage(getString(R.string.message_dialog_verifica_email_str))
+                            .setPositiveButton(getString(R.string.chiudi_str)) { d, _-> d.dismiss()}
+                            .show()
+                    }
+                    else { //Login successfull
+                        val database = Firebase.database.reference
+                        database.child("users").child(user?.email!!.replace(".",",").toString()).child("uid").setValue(user.uid)
+                        gotoMainActivity()
+                    }
                 } else {
                     // If sign in fails, display a message to the user.
                     showProgress(false)
@@ -309,11 +318,16 @@ class LoginActivity : AppCompatActivity() {
                         .addOnCompleteListener { task2 ->
                             if (task2.isSuccessful) {
                                 Log.d("SignUp", "Email sent.")
+                                Firebase.auth.signOut()
                                 AlertDialog
                                     .Builder(this)
                                     .setTitle("Registrazione inviata")
                                     .setMessage("E' stata inviata una email con un link di verifica all'indirizzo ${tvUserName.text}\nPer completare la registrazione seguire le istruzioni dell'email.")
-                                    .setPositiveButton("Chiudi") {dialog, which -> dialog.dismiss();finish() }
+                                    .setPositiveButton("Chiudi")
+                                    {dialog, which ->
+                                        dialog.dismiss()
+                                        finish()
+                                    }
                                     .show()
                             }
                         }
@@ -323,7 +337,7 @@ class LoginActivity : AppCompatActivity() {
                     AlertDialog
                         .Builder(this)
                         .setTitle("Regisrazione fallita")
-                        .setMessage("email già regstrata")
+                        .setMessage("email già registrata")
                         .setPositiveButton("Chiudi") {dialog, which -> dialog.dismiss() }
                         .show()
                     // If sign in fails, display a message to the user.

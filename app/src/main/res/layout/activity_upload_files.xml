@@ -9,7 +9,7 @@
             android:id="@+id/mainViewFlipper"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:displayedChild="0">
+            app:displayedChild="1">
 
         <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -158,7 +158,7 @@
                             android:layout_marginEnd="@dimen/medium_margin"
                             android:background="@drawable/small_round_corners"
                             android:clickable="true"
-                            android:drawableStart="@drawable/documenti_body_aggiungi_pulsante_c_scatta_foto"
+                            android:drawableStart="@drawable/ic_scatta_foto"
                             android:elevation="2dp"
                             android:focusable="true"
                             android:foreground="@drawable/ripple_effect"

@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <com.vjapp.writest.components.ViewFlipperEng
+            android:id="@+id/view_flipper_detail"
+            android:layout_width="match_parent"
+            app:displayedChild="1"
+            android:layout_height="match_parent">
+
+        <ProgressBar
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center">
+        </ProgressBar>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:context="com.vjapp.writest.TestDetailActivity">
+
+            <TextView
+                    android:id="@+id/labelDate"
+                    style="@style/Base.Labels.PrimaryColor"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="32dp"
+                    android:textStyle="bold"
+                    android:text="@string/data_invio_str"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                    android:id="@+id/tvData"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toStartOf="@+id/labelDate"
+                    app:layout_constraintTop_toBottomOf="@+id/labelDate"
+                    tools:text="data" />
+
+
+            <TextView
+                    android:id="@+id/labelToken"
+                    style="@style/Base.Labels.PrimaryColor"
+                    android:textStyle="bold"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/token_str"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tvData" />
+
+            <TextView
+                    android:id="@+id/tvToken"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="token"
+                    app:layout_constraintStart_toStartOf="@+id/labelToken"
+                    app:layout_constraintTop_toBottomOf="@+id/labelToken" />
+
+            <TextView
+                    android:id="@+id/labelSchool"
+                    style="@style/Base.Labels.PrimaryColor"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/scuola_str"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tvToken" />
+
+            <TextView
+                    android:id="@+id/tvSchool"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="testo2"
+                    app:layout_constraintStart_toStartOf="@+id/labelSchool"
+                    app:layout_constraintTop_toBottomOf="@+id/labelSchool" />
+
+            <TextView
+                    android:id="@+id/labelClass"
+                    style="@style/Base.Labels.PrimaryColor"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/classe_str"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tvSchool" />
+
+
+            <TextView
+                    android:id="@+id/tvClass"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    tools:text="testo3"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/labelClass" />
+
+            <TextView
+                    android:id="@+id/labelDiagnosi"
+                    style="@style/Base.Labels.PrimaryColor"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    android:text="Diagnosi disponibile"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tvClass" />
+
+
+            <TextView
+                    android:id="@+id/tvDiagnosi"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    tools:text="si/no"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/labelDiagnosi" />
+
+            <Button
+                    android:id="@+id/btnShowImage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="32dp"
+                    android:textAllCaps="false"
+                    android:paddingHorizontal="@dimen/large_padding"
+                    android:drawableStart="@drawable/ic_scatta_foto"
+                    android:text="@string/mostra_immagine_str"
+                    android:onClick="onBtnShowImageClick"
+                    android:textColor="@color/white"
+                    android:background="@drawable/round_button_active_effect_primarycolor"
+                    android:drawablePadding="@dimen/medium_padding"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tvDiagnosi" />
+
+            <Button
+                    android:id="@+id/btnShowVideo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="@dimen/large_padding"
+                    android:layout_marginTop="16dp"
+                    android:onClick="onBtnShowVideoClick"
+                    android:textColor="@color/white"
+                    android:textAllCaps="false"
+                    android:background="@drawable/round_button_active_effect_primarycolor"
+                    android:text="@string/mostra_video"
+                    android:drawableStart="@drawable/ic_film"
+                    android:drawablePadding="@dimen/large_padding"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/btnShowImage" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:context="com.vjapp.writest.TestDetailActivity">
+
+            <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="@string/errore_caricamento_dati_dalla_memoria_locale_str"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.vjapp.writest.components.ViewFlipperEng>
+</FrameLayout>

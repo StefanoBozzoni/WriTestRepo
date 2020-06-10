@@ -4,19 +4,32 @@ import android.content.Context
 import android.database.Cursor
 import android.net.Uri
 import android.provider.OpenableColumns
-import com.google.gson.Gson
-import com.vjapp.writest.R
-import com.vjapp.writest.data.model.ClassesResponse
-import com.vjapp.writest.data.model.SchoolsResponse
-import com.vjapp.writest.data.model.UploadFilesRequest
-import com.vjapp.writest.data.model.UploadFilesResponse
+import android.util.Log
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.ktx.database
+import com.google.firebase.iid.FirebaseInstanceId
+import com.google.firebase.ktx.Firebase
+import com.vjapp.writest.data.remote.model.SchoolsResponse
+import com.vjapp.writest.data.remote.model.UploadFilesRequest
+import com.vjapp.writest.data.remote.model.UploadFilesResponse
+import com.vjapp.writest.data.repository.datasource.LocalDataSource
 import com.vjapp.writest.data.repository.datasource.RemoteDataSource
 import com.vjapp.writest.domain.IRepository
-import java.io.*
-import java.lang.Exception
+import com.vjapp.writest.domain.interctor.UseCaseInitializeFirbaseSubscription
+import com.vjapp.writest.domain.mapper.DatabaseMapper
+import com.vjapp.writest.domain.mapper.ServiceMapper
+import com.vjapp.writest.domain.model.ClassesEntity
+import com.vjapp.writest.domain.model.TestEntity
+import com.vjapp.writest.domain.utils.await
+import org.koin.ext.checkedStringValue
+import java.io.File
+import java.io.FileOutputStream
 
-class Repository(private val remoteDataSource: RemoteDataSource, private val context: Context): IRepository {
-    override fun getToken(): String {
+class Repository(private val remoteDataSource: RemoteDataSource,
+                 private val localDataSource : LocalDataSource,
+                 private val context: Context): IRepository {
+    override suspend fun getToken(): String {
         return remoteDataSource.getToken()
     }
     override fun sendFiles(): Boolean {
@@ -38,7 +51,7 @@ class Repository(private val remoteDataSource: RemoteDataSource, private val con
 
         if (uri.toString().startsWith("content://")) {
             try {
-                fileCursor = context.getContentResolver()
+                fileCursor = context.contentResolver
                     .query(
                         uri,
                         arrayOf(OpenableColumns.DISPLAY_NAME, OpenableColumns.SIZE),
@@ -63,13 +76,11 @@ class Repository(private val remoteDataSource: RemoteDataSource, private val con
             fileName = File(uri.toString()).name
             fileSize = File(uri.toString()).length()
         }
-
         return Pair(fileName, fileSize)
-
     }
 
     override fun getFilePathFromUri(uri: Uri, outPutFileName: String): File? {
-        var file: File? = null
+        val file: File?
 
         if (uri.toString().startsWith("content://")) {
             //val fileName: String = this.getFileNameFromCursor(uri).first!!
@@ -82,7 +93,7 @@ class Repository(private val remoteDataSource: RemoteDataSource, private val con
             )
 
             FileOutputStream(file).use { outputStream ->
-                context.getContentResolver().openInputStream(uri).use { inputStream ->
+                context.contentResolver.openInputStream(uri).use { inputStream ->
                     inputStream?.copyTo(outputStream)
                 }
                 outputStream.flush()
@@ -114,14 +125,46 @@ class Repository(private val remoteDataSource: RemoteDataSource, private val con
         return remoteDataSource.getSchools()
     }
 
-    override suspend fun getClasses(): ClassesResponse {
+    override suspend fun getClasses(): ClassesEntity {
         /* mock classes
         val raw: InputStream = context.resources.openRawResource(R.raw.classes)
         val rd: Reader = BufferedReader(InputStreamReader(raw))
         val gson = Gson()
         return gson.fromJson(rd, ClassesResponse::class.java)
         */
-        return remoteDataSource.getClasses()
+        return ClassesEntity(remoteDataSource.getClasses().classList.map { el -> ServiceMapper.mapToEntity(el) })
     }
+
+    override suspend fun getTests(): List<TestEntity> {
+        return localDataSource.getTests().map {el -> DatabaseMapper.mapToEntity(el)}
+    }
+
+    override suspend fun getSingleTest(id:Int) : TestEntity {
+        return DatabaseMapper.mapToEntity(localDataSource.getTest(id)!!)
+    }
+
+    override suspend fun saveTest(t : TestEntity): Long {
+        return localDataSource.saveTest(DatabaseMapper.mapToModel(t))
+    }
+
+    override suspend fun getFireBaseToken(): String {
+        val instanceResult = FirebaseInstanceId.getInstance().instanceId
+            .addOnCompleteListener(OnCompleteListener { task ->
+                if (!task.isSuccessful) {
+                    Log.w(UseCaseInitializeFirbaseSubscription.TAG, "getInstanceId failed", task.exception)
+                    return@OnCompleteListener
+                }
+                // Get new Instance ID token
+                val token = task.result?.token
+                // Log and toast
+                val msg = "il nuovo token è ${token}"
+                Log.d(UseCaseInitializeFirbaseSubscription.TAG, msg)
+                val database = Firebase.database.reference
+                val user = Firebase.auth.currentUser
+                database.child("users").child(user?.email!!.replace(".",",").toString()).child("token").setValue(token)
+            }).await()
+        return instanceResult.token
+    }
+
 
 }

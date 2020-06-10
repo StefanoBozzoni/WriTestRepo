@@ -3,9 +3,7 @@ package com.vjapp.writest
 import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
-import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.net.Uri
@@ -22,13 +20,13 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.FileProvider
 import androidx.lifecycle.Observer
 import com.vjapp.writest.components.VJDialog
-import com.vjapp.writest.data.model.ClassesResponse
-import com.vjapp.writest.data.model.SchoolsResponse
+import com.vjapp.writest.data.remote.model.SchoolsResponse
+import com.vjapp.writest.domain.model.ClassesEntity
 import com.vjapp.writest.domain.model.UploadFilesRequestEntity
 import com.vjapp.writest.domain.model.UploadFilesResponseEntity
 import com.vjapp.writest.presentation.Resource
 import com.vjapp.writest.presentation.ResourceState
-import com.vjapp.writest.presentation.SendFilesViewModel
+import com.vjapp.writest.presentation.UploadFilesViewModel
 import kotlinx.android.synthetic.main.activity_upload_files.*
 import kotlinx.android.synthetic.main.activity_upload_files.view.*
 import kotlinx.android.synthetic.main.basic_spinner_view.view.*
@@ -36,12 +34,11 @@ import kotlinx.android.synthetic.main.dialog_generic_confirm.*
 import kotlinx.coroutines.*
 import org.koin.android.viewmodel.ext.android.viewModel
 import java.io.File
-import java.util.*
 import kotlin.coroutines.CoroutineContext
 
 class UploadFilesActivity : AppCompatActivity(), CoroutineScope {
 
-    private val sendAssetsVM: SendFilesViewModel by viewModel()
+    private val uploadAssetsVM: UploadFilesViewModel by viewModel()
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job
     private lateinit var job: Job
@@ -52,7 +49,7 @@ class UploadFilesActivity : AppCompatActivity(), CoroutineScope {
         setContentView(R.layout.activity_upload_files)
         job = Job()
 
-        sendAssetsVM.init()
+        uploadAssetsVM.init()
 
         btn_addFile.setOnClickListener { btnChoosePhotoFile() }
         btn_addFile2.setOnClickListener { btnChooseVideoFile() }
@@ -62,21 +59,15 @@ class UploadFilesActivity : AppCompatActivity(), CoroutineScope {
         btn_add_photo2.setOnClickListener { btnChooseVideoClick() }
         btnSendFiles.setOnClickListener { btnSendFilesClick() }
         checkEnableButton()
-        val randomUUID = UUID.randomUUID().toString()
+        //val randomToken = UUID.randomUUID().toString()
 
-        //sendAssetsVM.init()
-
-        val savedToken = sendAssetsVM.sharedpreferences.getString("token", "")
+        val savedToken = uploadAssetsVM.sharedpreferences.getString("token", "")
         if (savedToken?.isEmpty() ?: false) {
-            val editor = sendAssetsVM.sharedpreferences.edit()
-            tvToken.text = randomUUID
-            editor.putString("token", tvToken.text.toString())
-            editor.apply()
-            mToken = randomUUID
-        } else
+            uploadAssetsVM.generateNewToken()
+        } else {
             mToken = savedToken!!
-
-        tvToken.text = mToken
+            tvToken.text = mToken
+        }
 
         tvInfotext.movementMethod = ScrollingMovementMethod()
         if (supportActionBar != null) (supportActionBar as ActionBar).setDisplayHomeAsUpEnabled(true)
@@ -90,18 +81,30 @@ class UploadFilesActivity : AppCompatActivity(), CoroutineScope {
             response?.let { handlehttpResultData(response) }
         })
         */
-        sendAssetsVM.sendFilesLivData.observe(this, Observer { response ->
+
+        uploadAssetsVM.sendFilesLivData.observe(this, Observer { response ->
             response?.let { handleSendFileComplete(response) }
         })
 
-        sendAssetsVM.getConfigLivData.observe(this, Observer { response ->
+        uploadAssetsVM.getConfigLivData.observe(this, Observer { response ->
             response?.let { handleConfigResultData(response) }
         })
 
-        sendAssetsVM.getConfig()
-        //sendAssetsVM.httpBinDemo()
+        uploadAssetsVM.newTokenLivData.observe(this, Observer { response ->
+            response?.let { handleNewTokenResultData(response) }
+        })
 
+        uploadAssetsVM.getConfig()
     }
+
+    private fun handleNewTokenResultData(response: Resource<String>) {
+        if (response.status==ResourceState.SUCCESS) {
+            tvToken.text = response.data!!
+            mToken = response.data
+        }
+    }
+
+    //tvToken.text = randomToken
 
     override fun onSupportNavigateUp(): Boolean {
         onBackPressed()
@@ -128,7 +131,7 @@ class UploadFilesActivity : AppCompatActivity(), CoroutineScope {
         }
 
         //uploadFilesUsingLegacyServer(token)
-        sendAssetsVM.uploadAllFilesUsingFirebaseStorage(token)
+        uploadAssetsVM.uploadAllFilesUsingFirebaseStorage(token, sp_classe.spTextView.text.toString(),sp_scuola.spTextView.text.toString())
     }
 
 
@@ -136,14 +139,14 @@ class UploadFilesActivity : AppCompatActivity(), CoroutineScope {
         //it should work, not tested tought
         launch {
             val def1 = async(Dispatchers.IO) {
-                sendAssetsVM.getFilePathFromUri(
-                    sendAssetsVM.selectedPhotoUri!!,
+                uploadAssetsVM.getFilePathFromUri(
+                    uploadAssetsVM.selectedPhotoUri!!,
                     "provaimmagine.jpg"
                 )
             }
             val def2 = async(Dispatchers.IO) {
-                sendAssetsVM.getFilePathFromUri(
-                    sendAssetsVM.selectedVideoUri!!,
+                uploadAssetsVM.getFilePathFromUri(
+                    uploadAssetsVM.selectedVideoUri!!,
                     "provavideo.mp4"
                 )
             }
@@ -152,7 +155,7 @@ class UploadFilesActivity : AppCompatActivity(), CoroutineScope {
 
             fileImg?.apply {
                 fileVideo?.apply {
-                    sendAssetsVM.sendFiles(
+                    uploadAssetsVM.sendFiles(
                         UploadFilesRequestEntity(
                             fileImg.absolutePath,
                             fileVideo.absolutePath,
@@ -176,15 +179,15 @@ class UploadFilesActivity : AppCompatActivity(), CoroutineScope {
 
         if (resource.status == ResourceState.SUCCESS) {
             mainViewFlipper.displayedChild = 1
-
-            sendAssetsVM.generateNewToken()
             AlertDialog.Builder(this)
-                .setTitle("Invio completato")
-                .setMessage("L'invio è stato completato con successo")
-                .setPositiveButton("Chiudi") { d, _ -> d.dismiss();finish() }
+                .setTitle(getString(R.string.invio_completato_title))
+                .setMessage(getString(R.string.invio_completato_message_str))
+                .setPositiveButton(getString(R.string.chiudi_str)) { d, _ -> d.dismiss();finish() }
                 .show()
         }
+
         if (resource.status == ResourceState.ERROR) {
+            mainViewFlipper.displayedChild = 1
             AlertDialog.Builder(this)
                 .setTitle("Errore nell'invio")
                 .setMessage("L'invio non è stato completato a causa di errori. Ritenta ed assicurati di avere una connessione WIFI stabile.")
@@ -207,7 +210,7 @@ class UploadFilesActivity : AppCompatActivity(), CoroutineScope {
             mainViewFlipper.displayedChild = 1 //schools are the last data loaded
         }
 
-        if (resource.status == ResourceState.SUCCESS && resource.data is ClassesResponse) {
+        if (resource.status == ResourceState.SUCCESS && resource.data is ClassesEntity) {
             Log.d("CONFIGURAZIONE", resource.data.toString())
             val listClasses =
                 listOf("Scegliere la classe elementare:") + resource.data.classList.map { c -> c.type }
@@ -219,7 +222,7 @@ class UploadFilesActivity : AppCompatActivity(), CoroutineScope {
         }
 
         if (resource.status == ResourceState.ERROR) {
-            //TODO: Mostrare maschera di errrore
+            //TODO: Mostrare maschera di errore
         }
 
     }
@@ -234,11 +237,13 @@ class UploadFilesActivity : AppCompatActivity(), CoroutineScope {
             FileProvider.getUriForFile(this, "${this.packageName}.fileprovider", outputFile)
         intent.putExtra(MediaStore.EXTRA_OUTPUT, mPhotoURI)
 
+        /*
         contentResolver.takePersistableUriPermission(
             mPhotoURI,
             Intent.FLAG_GRANT_READ_URI_PERMISSION
         )
-        sendAssetsVM.selectedPhotoUri = mPhotoURI
+       */
+        uploadAssetsVM.selectedPhotoUri = mPhotoURI
 
         //sendAssetsVM.mOutputFile = outputFile.absolutePath
         startActivityForResult(intent, PICK_PHOTO)
@@ -254,11 +259,7 @@ class UploadFilesActivity : AppCompatActivity(), CoroutineScope {
         val mVideoURI =
             FileProvider.getUriForFile(this, "${this.packageName}.fileprovider", outputFile)
         intent.putExtra(MediaStore.EXTRA_OUTPUT, mVideoURI)
-        contentResolver.takePersistableUriPermission(
-            mVideoURI,
-            Intent.FLAG_GRANT_READ_URI_PERMISSION
-        )
-        sendAssetsVM.selectedVideoUri = mVideoURI
+        uploadAssetsVM.selectedVideoUri = mVideoURI
 
         //sendAssetsVM.mOutputFile = outputFile.absolutePath
         if (takeVideoIntent.resolveActivity(packageManager) != null) {
@@ -300,15 +301,15 @@ class UploadFilesActivity : AppCompatActivity(), CoroutineScope {
             dialog.cancel()
             if (v?.id == R.id.btn_cancelFile) {
                 //sendAssetsVM.mOutputFile = ""
-                sendAssetsVM.photoPage = 0
-                sendAssetsVM.selectedPhotoUri = null
+                uploadAssetsVM.photoPage = 0
+                uploadAssetsVM.selectedPhotoUri = null
                 viewFlipper.displayedChild = 0
                 viewFlipper.tv_nomefile.text = ""
             }
             if (v?.id == R.id.btn_cancelFile2) {
                 //sendAssetsVM.mOutputFile = ""
-                sendAssetsVM.videoPage = 0
-                sendAssetsVM.selectedVideoUri = null
+                uploadAssetsVM.videoPage = 0
+                uploadAssetsVM.selectedVideoUri = null
                 viewFlipper2.displayedChild = 0
                 viewFlipper2.tv_nomefile2.text = ""
             }
@@ -345,12 +346,12 @@ class UploadFilesActivity : AppCompatActivity(), CoroutineScope {
                 val displayName = getFileNameFromCursor(selectedUri).first
 
                 if (requestCode == PICK_FILE) {
-                    sendAssetsVM.selectedPhotoUri = selectedUri
+                    uploadAssetsVM.selectedPhotoUri = selectedUri
                     tv_nomefile.text = displayName
                     viewFlipper.displayedChild = 1
                 }
                 if (requestCode == PICK_FILE_VIDEO) {
-                    sendAssetsVM.selectedVideoUri = selectedUri
+                    uploadAssetsVM.selectedVideoUri = selectedUri
                     tv_nomefile2.text = displayName
                     viewFlipper2.displayedChild = 1
                 }
@@ -359,18 +360,19 @@ class UploadFilesActivity : AppCompatActivity(), CoroutineScope {
         }
 
         if (requestCode == PICK_PHOTO && resultCode == Activity.RESULT_OK) {
-            val file = File(sendAssetsVM.selectedPhotoUri?.path)
+            val file = File(uploadAssetsVM.selectedPhotoUri?.path)
             tv_nomefile.text = file.name
-            sendAssetsVM.photoPage = 1
-            viewFlipper.displayedChild = sendAssetsVM.photoPage
+            uploadAssetsVM.photoPage = 1
+            viewFlipper.displayedChild = uploadAssetsVM.photoPage
             checkEnableButton()
         }
 
         if (requestCode == PICK_VIDEO && resultCode == Activity.RESULT_OK) {
-            val file = File(sendAssetsVM.selectedVideoUri?.path)
+            val file = File(uploadAssetsVM.selectedVideoUri?.path)
             tv_nomefile2.text = file.name
-            sendAssetsVM.videoPage = 1
-            viewFlipper2.displayedChild = sendAssetsVM.videoPage
+            uploadAssetsVM.videoPage = 1
+            viewFlipper2.displayedChild = uploadAssetsVM.videoPage
+            uploadAssetsVM.selectedVideoUri = data?.data
             checkEnableButton()
         }
     }
@@ -385,7 +387,7 @@ class UploadFilesActivity : AppCompatActivity(), CoroutineScope {
     }
 
     private fun getFileNameFromCursor(uri: Uri): Pair<String?, Long> {
-        return sendAssetsVM.getFileNameFromCursor(uri)
+        return uploadAssetsVM.getFileNameFromCursor(uri)
     }
 
     companion object {

@@ -8,17 +8,19 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.tasks.Tasks
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
+import com.google.firebase.storage.ktx.storageMetadata
 import com.vjapp.writest.domain.interctor.*
+import com.vjapp.writest.domain.model.TestEntity
 import com.vjapp.writest.domain.model.UploadFilesRequestEntity
 import com.vjapp.writest.domain.model.UploadFilesResponseEntity
 import kotlinx.coroutines.*
-import org.koin.dsl.module.applicationContext
 import java.io.File
 import java.util.*
 
-class SendFilesViewModel(
+class UploadFilesViewModel(
     private val getTokenUseCase: UseCaseGetToken,
     private val httpBinDemoUseCase: UseCaseHttpBinDemo,
     private val sendFilesUseCase: UseCaseUploadFiles,
@@ -26,19 +28,21 @@ class SendFilesViewModel(
     private val getFileNameUseCase: UseCaseGetFileNameFromCursor,
     private val getSchoolsUseCase: UseCaseGetSchools,
     private val getClassesUseCase: UseCaseGetClasses,
+    private val saveTestUseCase: UseCaseSaveTest,
     private val context:Context
 ) : ViewModel() {
     lateinit var sharedpreferences: SharedPreferences
 
     var sendFilesLivData = MutableLiveData<Resource<UploadFilesResponseEntity>>()
-
     var getConfigLivData = MutableLiveData<Resource<Any>>()
+    var newTokenLivData = MutableLiveData<Resource<String>>()
 
     /*
     val httpBinLiveData = liveData(Dispatchers.IO) {
           val retrivedTodo = httpBinDemoUseCase.execute()
           emit(retrivedTodo)
     }
+
     var httpBinLiveData2 = MutableLiveData<String>()
     */
 
@@ -107,27 +111,45 @@ class SendFilesViewModel(
         }
     }
 
-    fun uploadAllFilesUsingFirebaseStorage(token: String) {
+    fun uploadAllFilesUsingFirebaseStorage(token: String, classe:String, scuola:String ) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 coroutineScope {
                     sendFilesLivData.postValue(Resource.loading())
-                    val uno = async {
+                    val defImgUri = async {
                         uploadSingleFileUsingFirebaseStorage(
                             selectedPhotoUri!!,
-                            token
+                            token,
+                            "jpg"
                         )
                     }
-                    val due = async {
+
+                    val defVideoUri = async {
                         uploadSingleFileUsingFirebaseStorage(
                             selectedVideoUri!!,
-                            token
+                            token,
+                            "mp4"
                         )
                     }
-                    val x1 = uno.await()
-                    val x2 = due.await()
-                    val esito = UploadFilesResponseEntity(esito = x2.toString())
-                    sendFilesLivData.postValue(Resource.success(esito))
+                    val imgUri   = defImgUri.await()
+                    val videoUri = defVideoUri.await()
+                    val uploadOutcome = UploadFilesResponseEntity(esito = "OK")
+                    if (uploadOutcome.esito=="OK") {
+                        val testToSave = TestEntity(
+                                           sendDate    = Date(),
+                                           token       = token,
+                                           videoUri    = videoUri.toString(),
+                                           imgUri      = imgUri.toString(),
+                                           iDSchool    = "1",
+                                           iDClassType = "1",
+                                           school      = scuola,
+                                           classType   = classe,
+                                           idTest      = null)
+                        async { saveDataToDB(testToSave) }.await()
+                    }
+                    generateNewTokenSusp()
+
+                    sendFilesLivData.postValue(Resource.success(uploadOutcome))
                 }
             } catch (t: Throwable) {
                 sendFilesLivData.postValue(Resource.error("Errore"))
@@ -135,16 +157,29 @@ class SendFilesViewModel(
         }
     }
 
-    fun uploadSingleFileUsingFirebaseStorage(fileUri: Uri, token: String): Uri {
+    suspend fun saveDataToDB(t:TestEntity):Boolean {
+        return saveTestUseCase.execute(UseCaseSaveTest.Params(t))>0
+    }
+
+    fun uploadSingleFileUsingFirebaseStorage(fileUri: Uri, token: String, extension:String): Uri {
         val TAG = "UploadFiles"
 
-        val storageRef = Firebase.storage.reference
-        val uploadPathRef = storageRef.child("uploads/${token + fileUri.lastPathSegment}")
+        val metadata = storageMetadata {
+            setCustomMetadata("fromUID", Firebase.auth.currentUser?.uid)
+        }
+        /*
+        uploadPathRef.updateMetadata(metadata).addOnSuccessListener {
+            Log.d(TAG, "metadata updated")
+        }
+        */
 
-        val myUploadTask = fileUri.lastPathSegment?.let {
+        val storageRef = Firebase.storage.reference
+        val uploadPathRef = storageRef.child("uploads/${token + "."+extension}")
+
+        val myUploadTask = fileUri.let {
             // Upload file to Firebase Storage
             Log.d(TAG, "uploadFromUri:dst:" + uploadPathRef.path)
-            uploadPathRef.putFile(fileUri).addOnProgressListener { taskSnapshot ->
+            uploadPathRef.putFile(fileUri,metadata).addOnProgressListener { taskSnapshot ->
                 //showProgressNotification(getString(R.string.progress_uploading),
                 //    taskSnapshot.bytesTransferred,
                 //    taskSnapshot.totalByteCount)
@@ -168,15 +203,32 @@ class SendFilesViewModel(
             }
         }
 
-        return Tasks.await(myUploadTask!!)
+        return Tasks.await(myUploadTask)
     }
 
+    /*
     fun generateNewToken(): String {
         val randomUUID = UUID.randomUUID().toString()
         val editor = sharedpreferences.edit()
         editor.putString("token", randomUUID)
         editor.apply()
         return randomUUID
+    }
+   */
+
+    suspend fun generateNewTokenSusp() {
+        newTokenLivData.postValue(Resource.loading())
+        val newToken = getTokenUseCase.execute()
+        val editor = sharedpreferences.edit()
+        editor.putString("token", newToken)
+        editor.commit() //sincrono
+        newTokenLivData.postValue(Resource.success(newToken))
+    }
+
+    fun generateNewToken() {
+        viewModelScope.launch(Dispatchers.IO) {
+            generateNewTokenSusp()
+        }
     }
 
 }

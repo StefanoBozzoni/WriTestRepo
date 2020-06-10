@@ -1,13 +1,14 @@
 package com.vjapp.writest.data.repository.datasource
 
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import com.vjapp.writest.data.exceptions.NetworkCommunicationException
 import com.vjapp.writest.data.exceptions.UploadFilesException
-import com.vjapp.writest.data.model.ClassesResponse
-import com.vjapp.writest.data.model.SchoolsResponse
-import com.vjapp.writest.data.model.UploadFilesRequest
-import com.vjapp.writest.data.model.UploadFilesResponse
+import com.vjapp.writest.data.remote.model.ClassesResponse
+import com.vjapp.writest.data.remote.model.SchoolsResponse
+import com.vjapp.writest.data.remote.model.UploadFilesRequest
+import com.vjapp.writest.data.remote.model.UploadFilesResponse
 import com.vjapp.writest.data.remote.AppService
-import kotlinx.coroutines.coroutineScope
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -18,12 +19,12 @@ import java.net.URLConnection
 class RemoteDataSource(
     private val appService: AppService
 ) {
-    fun getToken(): String {
-        val resp = appService.getToken().execute();
+    suspend fun getToken(): String {
+        val resp = appService.getToken();
         val result: String
 
         if (resp.isSuccessful)
-            result = resp.body().toString()
+            result = resp.body()?.token?:""
         else
             result = ""
 
