@@ -14,6 +14,7 @@ import android.text.method.ScrollingMovementMethod
 import android.util.Log
 import android.view.View
 import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -141,13 +142,13 @@ class UploadFilesActivity : AppCompatActivity(), CoroutineScope {
             val def1 = async(Dispatchers.IO) {
                 uploadAssetsVM.getFilePathFromUri(
                     uploadAssetsVM.selectedPhotoUri!!,
-                    "provaimmagine.jpg"
+                    "immagine.jpg"
                 )
             }
             val def2 = async(Dispatchers.IO) {
                 uploadAssetsVM.getFilePathFromUri(
                     uploadAssetsVM.selectedVideoUri!!,
-                    "provavideo.mp4"
+                    "video.mp4"
                 )
             }
             val fileImg = def1.await()
@@ -222,7 +223,8 @@ class UploadFilesActivity : AppCompatActivity(), CoroutineScope {
         }
 
         if (resource.status == ResourceState.ERROR) {
-            //TODO: Mostrare maschera di errore
+            Toast.makeText(this,"Attivare la connessione ad internet",Toast.LENGTH_LONG).show()
+            finish()
         }
 
     }

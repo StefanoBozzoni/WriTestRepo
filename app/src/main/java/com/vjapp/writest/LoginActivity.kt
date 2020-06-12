@@ -269,6 +269,7 @@ class LoginActivity : AppCompatActivity() {
                     showProgress(false)
                     val user = auth.currentUser
                     if (!(user?.isEmailVerified?:false)) {
+                        //Login successfull but email still isn't verified
                         Firebase.auth.signOut()
                         tilPassword?.error = getString(R.string.email_non_verificata_str)
                         tvPassword?.requestFocus()

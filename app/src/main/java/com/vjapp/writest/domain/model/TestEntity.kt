@@ -17,3 +17,10 @@ data class TestEntity(
     val iDClassType: String,
     var idTest     : Int?
 )
+{
+    constructor() : this(Date(), "",
+        "", "","",
+        "", "", "",
+        0
+    )
+}

@@ -11,13 +11,20 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationCompat.DEFAULT_SOUND
 import androidx.core.app.NotificationCompat.DEFAULT_VIBRATE
-import androidx.core.app.NotificationManagerCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
-import com.vjapp.writest.MainActivity
+import com.vjapp.writest.LoginActivity
 import com.vjapp.writest.R
+import com.vjapp.writest.domain.interctor.UseCaseAddMessageToQueue
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import org.koin.android.ext.android.get
+import java.util.*
 
-class FirebaseIdService : FirebaseMessagingService() {
+class MyFirebaseMsgService() : FirebaseMessagingService() {
+
+    val addMessageToQueueUseCase : UseCaseAddMessageToQueue = get()
 
     override fun onNewToken(token: String) {
         super.onNewToken(token)
@@ -26,27 +33,6 @@ class FirebaseIdService : FirebaseMessagingService() {
         )
         sendRegistrationToServer(token)
     }
-
-    /**
-     * Called if InstanceID token is updated. This may occur if the security of
-     * the previous token had been compromised. Note that this is called when the InstanceID token
-     * is initially generated so this is where you would retrieve the token.
-     */
-    /*
-    fun onTokenRefresh() {
-        // Get updated InstanceID token.
-        val refreshedToken: String = FirebaseInstanceId.getInstance().getToken()!!
-        Log.d(
-            LOG_TAG,
-            "Refreshed token: $refreshedToken"
-        )
-
-        // If you want to send messages to this application instance or
-        // manage this apps subscriptions on the server side, send the
-        // Instance ID token to your app server.
-        sendRegistrationToServer(refreshedToken)
-    }
-    */
 
     /**
      * Persist token to third-party servers.
@@ -75,21 +61,23 @@ class FirebaseIdService : FirebaseMessagingService() {
             Log.d(LOG_TAG, "Message data payload: $data")
             // Send a notification that you got a new message
             sendNotification(data)
-            //insertSquawk(data)
         }
     }
 
     private fun sendNotification(data: Map<String, String>) {
 
-        val intent = Intent(this, MainActivity::class.java)
+        val intent = Intent(this, LoginActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         // Create the pending intent to launch the activity
         val pendingIntent = PendingIntent.getActivity(
             this, 0 /* Request code */, intent,
             PendingIntent.FLAG_ONE_SHOT
         )
-        val author = data[JSON_KEY_AUTHOR]
-        var message = data[JSON_KEY_MESSAGE]
+        val author    = data[JSON_KEY_AUTHOR]
+        var message   = data[JSON_KEY_MESSAGE]
+        val token     = data[JSON_KEY_TOKEN]
+        val diagnosis = data[JSON_KEY_DIAGNOSIS]
+        val email     = data[JSON_KEY_EMAIL]
 
         // If the message is longer than the max number of characters we want in our
         // notification, truncate it and add the unicode character for ellipsis
@@ -110,7 +98,9 @@ class FirebaseIdService : FirebaseMessagingService() {
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         createNotificationChannel()
-        notificationManager.notify(0 /* ID of notification */, notificationBuilder.build())
+
+        notificationManager.notify(UUID.randomUUID().toString(),0 /* ID of notification */, notificationBuilder.build())
+        addTokenToDBQueue(token,email,diagnosis) //Insert messages info into DB table queue
 
         /*
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
@@ -120,6 +110,16 @@ class FirebaseIdService : FirebaseMessagingService() {
                 pendingIntent
             )
         */
+
+
+    }
+
+    fun addTokenToDBQueue(token:String?, email: String?, diagnosis:String?) {
+        if (token!=null && diagnosis!=null && email!=null) {
+            GlobalScope.launch(Dispatchers.IO) {
+                addMessageToQueueUseCase.execute(UseCaseAddMessageToQueue.Params(token, email, diagnosis))
+            }
+        }
     }
 
     private fun createNotificationChannel() {
@@ -140,10 +140,13 @@ class FirebaseIdService : FirebaseMessagingService() {
     }
 
     companion object {
-        private val LOG_TAG = FirebaseIdService::class.java.simpleName
-        const val JSON_KEY_AUTHOR = "author"
-        const val JSON_KEY_MESSAGE = "message"
-        const val NOTIFICATION_MAX_CHARACTERS = 30
-        const val CHANNEL_ID = "writest channel"
+        private val LOG_TAG    = MyFirebaseMsgService::class.java.simpleName
+        const val JSON_KEY_AUTHOR    = "author"
+        const val JSON_KEY_MESSAGE   = "message"
+        const val JSON_KEY_TOKEN     = "token"
+        const val JSON_KEY_DIAGNOSIS = "diagnosis"
+        const val JSON_KEY_EMAIL     = "email"
+        const val NOTIFICATION_MAX_CHARACTERS = 50
+        const val CHANNEL_ID         = "writest channel"
     }
 }

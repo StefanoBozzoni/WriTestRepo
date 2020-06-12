@@ -20,4 +20,9 @@ data class CachedTest(
 ){
     //@PrimaryKey(autoGenerate = true)
     //var idTest  : Int = 1
+    constructor() : this(Date(), "",
+        "", "","",
+        "", "", "",
+        0
+    )
 }

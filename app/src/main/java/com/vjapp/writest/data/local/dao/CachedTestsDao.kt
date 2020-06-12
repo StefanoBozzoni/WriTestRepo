@@ -18,4 +18,10 @@ abstract class CachedTestsDao {
     @Query("SELECT * FROM ${DatabaseConstants.TABLE_TESTS} where idTest=:id")
     abstract suspend fun getTest(id:Int): CachedTest?
 
+    @Query("DELETE FROM ${DatabaseConstants.TABLE_TESTS}")
+    abstract suspend fun clearTestTable()
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    abstract suspend fun insertAllTests(cachedTests: List<CachedTest>) : List<Long>
+
 }

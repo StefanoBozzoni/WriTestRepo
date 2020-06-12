@@ -22,13 +22,14 @@ import com.vjapp.writest.domain.mapper.ServiceMapper
 import com.vjapp.writest.domain.model.ClassesEntity
 import com.vjapp.writest.domain.model.TestEntity
 import com.vjapp.writest.domain.utils.await
-import org.koin.ext.checkedStringValue
+import kotlinx.coroutines.coroutineScope
 import java.io.File
 import java.io.FileOutputStream
 
 class Repository(private val remoteDataSource: RemoteDataSource,
                  private val localDataSource : LocalDataSource,
                  private val context: Context): IRepository {
+
     override suspend fun getToken(): String {
         return remoteDataSource.getToken()
     }
@@ -139,6 +140,10 @@ class Repository(private val remoteDataSource: RemoteDataSource,
         return localDataSource.getTests().map {el -> DatabaseMapper.mapToEntity(el)}
     }
 
+    override suspend fun getTestsFromRemote(): List<TestEntity> {
+        return localDataSource.getTestsFromRemote().map {el -> DatabaseMapper.mapToEntity(el)}
+    }
+
     override suspend fun getSingleTest(id:Int) : TestEntity {
         return DatabaseMapper.mapToEntity(localDataSource.getTest(id)!!)
     }
@@ -164,7 +169,29 @@ class Repository(private val remoteDataSource: RemoteDataSource,
                 database.child("users").child(user?.email!!.replace(".",",").toString()).child("token").setValue(token)
             }).await()
         return instanceResult.token
+
+        return ""
     }
 
+    override suspend fun syncDB() : Boolean {
+        try {
+            coroutineScope {
+                localDataSource.deleteTests()
+                val cachedTests = localDataSource.getTestsFromRemote()
+                localDataSource.insertAllTests(cachedTests)
+            }
+            return true
+        } catch (e:Throwable) {
+          return false
+        }
+    }
+
+    override fun registerUpload(token:String) {
+        localDataSource.registerUpload(token)
+    }
+
+    override suspend fun addDiagnosisToQueue(token:String,email:String, diagnosis:String) {
+        localDataSource.addDiagnosisToQueue(token,email, diagnosis)
+    }
 
 }

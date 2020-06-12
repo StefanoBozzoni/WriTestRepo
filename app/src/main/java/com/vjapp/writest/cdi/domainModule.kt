@@ -15,4 +15,7 @@ val domainModule = module {
     factory { UseCaseGetTests(get()) }
     factory { UseCaseGetSingleTest(get()) }
     factory {UseCaseInitializeFirbaseSubscription(get()) }
+    factory { UseCaseSynchLocalDB(get()) }
+    factory { UseCaseAddMessageToQueue(get()) }
+    factory { UseCaseRegisterUpload(get()) }
 }

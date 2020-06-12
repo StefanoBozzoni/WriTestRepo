@@ -33,5 +33,6 @@
     <string name="invio_completato_message_str">L\'invio è stato completato con successo</string>
     <string name="invio_completato_title">Invio completato</string>
     <string name="notification_message">notifica di WriTest app</string>
+    <string name="sincronizzazione_in_corso">Sincronizzazione in corso...</string>
 
 </resources>

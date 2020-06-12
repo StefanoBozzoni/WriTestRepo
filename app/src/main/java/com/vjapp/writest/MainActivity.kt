@@ -11,6 +11,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Observer
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import com.vjapp.writest.presentation.MainViewModel
 import com.vjapp.writest.presentation.NotificationViewModel
 import com.vjapp.writest.presentation.Resource
 import com.vjapp.writest.presentation.ResourceState
@@ -20,6 +21,7 @@ import org.koin.android.viewmodel.ext.android.viewModel
 class MainActivity : AppCompatActivity() {
 
     val notificationViewModel : NotificationViewModel by viewModel()
+    val mainViewModel : MainViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,6 +39,25 @@ class MainActivity : AppCompatActivity() {
         notificationViewModel.notificationSubscriptionLiveData.observe(this, Observer { response ->
             response?.let { handleSendFileComplete(response) }
         })
+        mainViewModel.syncDBLiveData.observe(this, Observer { response ->
+            response?.let { handleSyncDBComplete(response) }
+        })
+    }
+
+    private fun handleSyncDBComplete(response: Resource<Boolean>) {
+        when (response.status) {
+            ResourceState.SUCCESS -> {
+                mainViewFlipper.displayedChild=1
+                //TODO: Check to see if there are Records in the Queue Table and go to the History Section, in the case,
+                //or detail section, first find the token to Display
+            }
+            ResourceState.LOADING -> {
+                mainViewFlipper.displayedChild=0
+            }
+            ResourceState.ERROR -> {
+                mainViewFlipper.displayedChild=2
+            }
+        }
     }
 
     private fun handleSendFileComplete(response: Resource<String>) {

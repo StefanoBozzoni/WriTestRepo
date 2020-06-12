@@ -29,6 +29,7 @@ class UploadFilesViewModel(
     private val getSchoolsUseCase: UseCaseGetSchools,
     private val getClassesUseCase: UseCaseGetClasses,
     private val saveTestUseCase: UseCaseSaveTest,
+    private val registerUploadUSeCase: UseCaseRegisterUpload,
     private val context:Context
 ) : ViewModel() {
     lateinit var sharedpreferences: SharedPreferences
@@ -131,8 +132,13 @@ class UploadFilesViewModel(
                             "mp4"
                         )
                     }
+
+                    registerUploadUSeCase.execute(UseCaseRegisterUpload.Params(token))
+
                     val imgUri   = defImgUri.await()
                     val videoUri = defVideoUri.await()
+                    //defreg.await()
+
                     val uploadOutcome = UploadFilesResponseEntity(esito = "OK")
                     if (uploadOutcome.esito=="OK") {
                         val testToSave = TestEntity(
