@@ -8,11 +8,12 @@ import com.vjapp.writest.R
 import com.vjapp.writest.domain.model.TestEntity
 import com.vjapp.writest.domain.utils.toFullString
 import kotlinx.android.synthetic.main.item_test.view.*
+import java.util.*
 
 class TestsAdapter(private val listener: OnTestsSelectionListener) : RecyclerView.Adapter<TestsAdapter.ListViewHolder>() {
 
     interface OnTestsSelectionListener {
-        fun onTestSelection(id: Int, element: TestEntity)
+        fun onTestSelection(uploadToken: String, element: TestEntity)
         fun onEmptyList() {}
     }
 
@@ -49,10 +50,10 @@ class TestsAdapter(private val listener: OnTestsSelectionListener) : RecyclerVie
         fun bind(data: TestEntity, position:Int) {
             itemView.tv_send_date.text = String.format("%s - %s" ,data.sendDate.toFullString(),data.token) //TODO
             itemView.tv_school.text = String.format("%s - %s",data.school, data.classType)
-            itemView.tv_diagnosi.text = "no"
+            itemView.tv_diagnosi.text = data.diagnosis
 
             itemView.setOnClickListener {
-                data?.apply { listener.onTestSelection(data.idTest!!, data)}
+                listener.onTestSelection(data.token, data)
             }
 
         }

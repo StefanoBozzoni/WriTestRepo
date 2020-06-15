@@ -15,6 +15,7 @@ data class CachedTest(
     val classType   : String,
     val iDSchool    : String,
     val iDClassType : String,
+    val diagnosis   : String?,
     @PrimaryKey(autoGenerate = true)
     val idTest      : Int?
 ){
@@ -22,7 +23,7 @@ data class CachedTest(
     //var idTest  : Int = 1
     constructor() : this(Date(), "",
         "", "","",
-        "", "", "",
+        "", "", "","No",
         0
     )
 }

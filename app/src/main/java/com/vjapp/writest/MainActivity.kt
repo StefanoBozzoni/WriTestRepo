@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.ActionBar
@@ -15,6 +16,7 @@ import com.vjapp.writest.presentation.MainViewModel
 import com.vjapp.writest.presentation.NotificationViewModel
 import com.vjapp.writest.presentation.Resource
 import com.vjapp.writest.presentation.ResourceState
+import com.vjapp.writest.services.MyFirebaseMsgService.Companion.UPLOAD_TOKEN
 import kotlinx.android.synthetic.main.activity_main.*
 import org.koin.android.viewmodel.ext.android.viewModel
 
@@ -26,6 +28,9 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        val uploadToken : String? = intent.getStringExtra(UPLOAD_TOKEN)
+        uploadToken?.apply { Log.d("UPLOADTOKEN", uploadToken) }
 
         btnNuovoInvio.setOnClickListener {
             onBtnNuovoInvioClick()
@@ -88,7 +93,7 @@ class MainActivity : AppCompatActivity() {
                 return true
             }
             R.id.mi_storico -> {
-                startActivity(Intent(this, TestsHistoryActivity::class.java))
+                startActivity(Intent(this, TestsListActivity::class.java))
                 return true
             }
             R.id.mi_help -> {

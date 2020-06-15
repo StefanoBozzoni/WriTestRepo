@@ -21,7 +21,7 @@ import java.io.File
 import java.util.*
 
 class TestListViewModel(
-    private val getTestsUseCase: UseCaseGetTests
+    private val getTestsUseCase: UseCaseGetTestsFromRemote
 ) : ViewModel() {
     var testsLiveData = MutableLiveData<Resource<List<TestEntity>>>()
 

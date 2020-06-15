@@ -25,6 +25,8 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.vjapp.writest.domain.model.UserAccountsEntity
 import com.vjapp.writest.domain.utils.await
+import com.vjapp.writest.services.MyFirebaseMsgService.Companion.BY_NOTIFICATION
+import com.vjapp.writest.services.MyFirebaseMsgService.Companion.UPLOAD_TOKEN
 import kotlinx.android.synthetic.main.login_layout.*
 
 
@@ -38,13 +40,11 @@ class LoginActivity : AppCompatActivity() {
             return confirm_password_form.visibility == View.VISIBLE
         }
 
-    // UI references.
     private var mUserName: AutoCompleteTextView? = null
     private var mProgressView: View? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         auth = Firebase.auth
-
         //setContentView(R.layout.activity_form_login);
         setContentView(R.layout.activity_login_card_overlap)
         initComponent()
@@ -52,9 +52,33 @@ class LoginActivity : AppCompatActivity() {
         tvPassword.setHintAndReduceFontSize(getString(R.string.inserisci_la_tua_password),0.9f)
         tvUserName.setHintAndReduceFontSize(getString(R.string.inserisci_la_tua_email),0.9f)
         val currentUser = auth.currentUser
+
         if (currentUser!=null) {
-            gotoMainActivity()
+            gotoNextActivity()
         }
+    }
+
+    fun gotoNextActivity() {
+        //Wen we get here user is always available
+        val user = FirebaseAuth.getInstance().currentUser
+        user?.apply {
+            Firebase.database.reference.child("history").child(user.uid).child("tests")
+                .keepSynced(true)
+
+            val uploadToken: String? = intent.getStringExtra(UPLOAD_TOKEN)
+            if (uploadToken != null)
+                gotoDetailTestActivity(uploadToken)
+            else
+                gotoMainActivity()
+        }
+    }
+
+    private fun gotoDetailTestActivity(uploadToken:String) {
+        val i = Intent(applicationContext, TestDetailActivity::class.java)
+        i.putExtra(UPLOAD_TOKEN, uploadToken)
+        i.putExtra(BY_NOTIFICATION, true)
+        startActivity(i)
+        finish()
     }
 
     fun hideSystemUI() {
@@ -101,7 +125,7 @@ class LoginActivity : AppCompatActivity() {
             tvPassword.setHintAndReduceFontSize(strHint,0.9f)
 
             sign_up.text = "accedi"
-            lblPrimoAccesso.text = "ti sei già registrato?"
+            lblPrimoAccesso.text = getString(R.string.sei_già_registrato_str)
             email_sign_in_button.text = "REGISTRATI"
         } else {
             confirm_password_form.visibility = View.GONE
@@ -115,12 +139,6 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun attemptLogin() {
-
-        /*
-        if (mAuthTask != null) {
-            return
-        }
-       */
 
         tvUserName.error = null
         tvPassword.error = null
@@ -282,7 +300,7 @@ class LoginActivity : AppCompatActivity() {
                     else { //Login successfull
                         val database = Firebase.database.reference
                         database.child("users").child(user?.email!!.replace(".",",").toString()).child("uid").setValue(user.uid)
-                        gotoMainActivity()
+                        gotoNextActivity()
                     }
                 } else {
                     // If sign in fails, display a message to the user.

@@ -21,20 +21,36 @@ import java.io.File
 import java.util.*
 
 class TestDetailViewModel(
-    private val getsingleTestUseCase: UseCaseGetSingleTest
+    private val getsingleTestUseCase: UseCaseGetSingleTestFromRemote,
+    private val getDiagnosisUrlUseCase: UseCaseGetDiagnosisUrl
 ) : ViewModel() {
 
     var testsLiveData = MutableLiveData<Resource<TestEntity>>()
+    var diagnosisLiveData = MutableLiveData<Resource<Uri>>()
 
-    fun init(id:Int) {
+    fun init(uploadToken:String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val test = getsingleTestUseCase.execute(UseCaseGetSingleTest.Params(id))
+                val test = getsingleTestUseCase.execute(UseCaseGetSingleTestFromRemote.Params(uploadToken))
                 testsLiveData.postValue(Resource.success(test))
             }
             catch(e:Throwable) {
                 testsLiveData.postValue(Resource.error("Errore ricezione test"))
             }
+        }
+    }
+
+    fun showDiagnosis(uploadToken:String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            diagnosisLiveData.postValue(Resource.loading())
+            try {
+                val uri = getDiagnosisUrlUseCase.execute(UseCaseGetDiagnosisUrl.Params(uploadToken))
+                diagnosisLiveData.postValue(Resource.success(uri))
+            }
+            catch(e:Throwable) {
+                diagnosisLiveData.postValue(Resource.error("Errore recupero diagnosi"))
+            }
+
         }
     }
 }

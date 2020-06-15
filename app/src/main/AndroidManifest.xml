@@ -19,7 +19,7 @@
         <activity android:name=".TestDetailActivity"
                 android:screenOrientation="nosensor"/>
         <activity
-                android:name=".TestsHistoryActivity"
+                android:name=".TestsListActivity"
                 android:screenOrientation="nosensor" />
         <activity
                 android:name=".MainActivity"

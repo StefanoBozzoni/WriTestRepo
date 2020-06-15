@@ -162,6 +162,25 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/btnShowImage" />
 
+            <Button
+                    android:id="@+id/btnShowDiagnosis"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="@dimen/large_padding"
+                    android:layout_marginTop="16dp"
+                    android:onClick="onBtnShowDiagnosisClick"
+                    android:textColor="@color/white"
+                    android:textAllCaps="false"
+                    android:background="@drawable/round_button_active_effect_primarycolor"
+                    android:text="@string/mostra_diagnosi"
+                    android:drawableStart="@drawable/ic_history_white_24dp"
+                    android:drawablePadding="@dimen/large_padding"
+                    android:visibility="gone"
+                    tools:visibility="visible"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/btnShowVideo" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout

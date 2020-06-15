@@ -1,5 +1,6 @@
 package com.vjapp.writest.data.repository.datasource
 
+import android.net.Uri
 import android.util.Log
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
@@ -7,10 +8,12 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import com.vjapp.writest.data.local.database.AppDatabase
 import com.vjapp.writest.data.local.model.CachedQueue
 import com.vjapp.writest.data.local.model.CachedTest
 import com.vjapp.writest.data.local.model.CachedTests
+import com.vjapp.writest.domain.utils.await
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancel
@@ -20,14 +23,19 @@ import kotlinx.coroutines.flow.callbackFlow
 import java.util.concurrent.CancellationException
 
 class LocalDataSource(private val database: AppDatabase) {
-
-    private val remoteDB = Firebase.database.reference
+    private val remoteDB  = Firebase.database.reference
+    private val storageRef = Firebase.storage.reference
 
     suspend fun getTests(): List<CachedTest> {
         return database.cachedTestsDao().getTests()?:emptyList()
     }
 
+    suspend fun findIdFromToken(uploadToken : String) : Int {
+        return database.cachedTestsDao().findIdFromToken(uploadToken)
+    }
+
     suspend fun getTestsFromRemote(): List<CachedTest> {
+
         val def : CompletableDeferred<CachedTests> = CompletableDeferred()
         val testListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -42,11 +50,11 @@ class LocalDataSource(private val database: AppDatabase) {
             }
         }
         val user = Firebase.auth.currentUser!!
-        remoteDB.child("history").child(user.uid).addListenerForSingleValueEvent(testListener)
+        remoteDB.child("history").child(user.uid).addValueEventListener(testListener)
         val result = def.await()
         remoteDB.child("history").child(user.uid).removeEventListener(testListener)
 
-        return result.tests.map { el -> el.value }
+        return result.tests.map { el -> el.value }.sortedByDescending { el->el.idTest }
     }
 
     @ExperimentalCoroutinesApi
@@ -73,11 +81,40 @@ class LocalDataSource(private val database: AppDatabase) {
         return database.cachedTestsDao().getTest(id)
     }
 
+    suspend fun getTestFromRemote(uploadToken:String): CachedTest? {
+        val def : CompletableDeferred<CachedTest> = CompletableDeferred()
+        val user = Firebase.auth.currentUser!!
+
+        //val currentTestRef = Firebase.database.getReference("history/${user.uid}/tests/${uploadToken}/diagnosis")
+
+        val testListener = object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                // Get Post object and use the values to update the UI
+                val test = dataSnapshot.getValue(CachedTest::class.java)
+                if (test==null)
+                    def.completeExceptionally(Exception("Test non trovato"))
+                else
+                    def.complete(test)
+            }
+            override fun onCancelled(databaseError: DatabaseError) {
+                // Getting Post failed, log a message
+                //Log.w("TAG", "loadPost:onCancelled", databaseError.toException())
+                def.cancel(CancellationException("Errore recupero dati storici dal server"))
+            }
+        }
+
+        remoteDB.child("history").child(user.uid).child("tests").child(uploadToken).addValueEventListener(testListener)
+        val result:CachedTest? = def.await()
+        remoteDB.child("history").child(user.uid).child("tests").child(uploadToken).removeEventListener(testListener)
+
+        return result
+    }
+
     suspend fun saveTest(ct : CachedTest): Long {
         val newId = database.cachedTestsDao().insertTest(ct) //insert into localDB
         val ct2 = ct.copy(idTest = newId.toInt())
         val user= Firebase.auth.currentUser
-        remoteDB.child("history").child(user!!.uid).child("tests").child(newId.toString()).setValue(ct2)  //insert into realtime DB (it is also local and remote)
+        remoteDB.child("history").child(user!!.uid).child("tests").child(ct2.token).setValue(ct2)  //insert into realtime DB (it is also local and remote)
         return newId
     }
 
@@ -102,6 +139,11 @@ class LocalDataSource(private val database: AppDatabase) {
 
     suspend fun addDiagnosisToQueue(token:String,email:String, diagnosis:String) {
         database.cachedQueueDao().pushItem(CachedQueue("updateDiagnosis",token,email,diagnosis,null))
+    }
+
+    suspend fun getDiagnosisUrl(uploadToken: String): Uri {
+        //return storageRef.child("uploads").child("diagnosis").child(uploadToken).downloadUrl.await()
+        return storageRef.child("uploads").child(uploadToken+".jpg").downloadUrl.await()
     }
 
 

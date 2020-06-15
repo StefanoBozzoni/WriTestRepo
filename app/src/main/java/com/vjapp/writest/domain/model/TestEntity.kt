@@ -15,12 +15,13 @@ data class TestEntity(
     val classType  : String,
     val iDSchool   : String,
     val iDClassType: String,
+    val diagnosis  : String,
     var idTest     : Int?
 )
 {
     constructor() : this(Date(), "",
         "", "","",
-        "", "", "",
+        "", "", "","No",
         0
     )
 }

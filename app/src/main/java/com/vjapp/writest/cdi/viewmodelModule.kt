@@ -24,7 +24,7 @@ val viewModelModule = module {
 
     viewModel {TestListViewModel(get()) }
 
-    viewModel { TestDetailViewModel(get()) }
+    viewModel { TestDetailViewModel(get(),get()) }
 
     viewModel { NotificationViewModel(get()) }
 

@@ -23,9 +23,12 @@ interface IRepository {
     suspend fun getTests() : List<TestEntity>
     suspend fun getTestsFromRemote() : List<TestEntity>
     suspend fun getSingleTest(id:Int) : TestEntity
+    suspend fun getSingleTest(uploadToken:String) : TestEntity
+    suspend fun getSingleTestFromRemote(uploadToken:String) : TestEntity
     suspend fun saveTest(t : TestEntity): Long
     suspend fun getFireBaseToken() : String
     suspend fun syncDB() : Boolean
     fun registerUpload(token:String)
     suspend fun addDiagnosisToQueue(token:String,email:String, diagnosis:String)
+    suspend fun getDiagnosisUrl(uploadToken:String) : Uri
 }

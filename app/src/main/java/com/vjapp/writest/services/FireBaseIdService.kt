@@ -11,6 +11,8 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationCompat.DEFAULT_SOUND
 import androidx.core.app.NotificationCompat.DEFAULT_VIBRATE
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.vjapp.writest.LoginActivity
@@ -66,18 +68,22 @@ class MyFirebaseMsgService() : FirebaseMessagingService() {
 
     private fun sendNotification(data: Map<String, String>) {
 
+        val author    = data[JSON_KEY_AUTHOR]
+        var message   = data[JSON_KEY_MESSAGE]
+        val uploadToken= data[JSON_KEY_TOKEN]
+        val diagnosis = data[JSON_KEY_DIAGNOSIS]
+        val email     = data[JSON_KEY_EMAIL]
+
         val intent = Intent(this, LoginActivity::class.java)
+        intent.putExtra(UPLOAD_TOKEN    , uploadToken)
+        intent.putExtra(BY_NOTIFICATION ,  true)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+
         // Create the pending intent to launch the activity
         val pendingIntent = PendingIntent.getActivity(
             this, 0 /* Request code */, intent,
             PendingIntent.FLAG_ONE_SHOT
         )
-        val author    = data[JSON_KEY_AUTHOR]
-        var message   = data[JSON_KEY_MESSAGE]
-        val token     = data[JSON_KEY_TOKEN]
-        val diagnosis = data[JSON_KEY_DIAGNOSIS]
-        val email     = data[JSON_KEY_EMAIL]
 
         // If the message is longer than the max number of characters we want in our
         // notification, truncate it and add the unicode character for ellipsis
@@ -100,7 +106,7 @@ class MyFirebaseMsgService() : FirebaseMessagingService() {
         createNotificationChannel()
 
         notificationManager.notify(UUID.randomUUID().toString(),0 /* ID of notification */, notificationBuilder.build())
-        addTokenToDBQueue(token,email,diagnosis) //Insert messages info into DB table queue
+        //addTokenToDBQueue(uploadToken,email,diagnosis) //Insert messages info into DB table queue
 
         /*
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
@@ -114,6 +120,7 @@ class MyFirebaseMsgService() : FirebaseMessagingService() {
 
     }
 
+    /*
     fun addTokenToDBQueue(token:String?, email: String?, diagnosis:String?) {
         if (token!=null && diagnosis!=null && email!=null) {
             GlobalScope.launch(Dispatchers.IO) {
@@ -121,6 +128,7 @@ class MyFirebaseMsgService() : FirebaseMessagingService() {
             }
         }
     }
+   */
 
     private fun createNotificationChannel() {
         // Create the NotificationChannel, but only on API 26+ because
@@ -148,5 +156,7 @@ class MyFirebaseMsgService() : FirebaseMessagingService() {
         const val JSON_KEY_EMAIL     = "email"
         const val NOTIFICATION_MAX_CHARACTERS = 50
         const val CHANNEL_ID         = "writest channel"
+        const val UPLOAD_TOKEN       = "UPLOAD_TOKEN"
+        const val BY_NOTIFICATION    = "BY_NOTIFICATION"
     }
 }

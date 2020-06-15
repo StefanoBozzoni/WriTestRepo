@@ -6,6 +6,7 @@ import android.net.Uri
 import android.provider.OpenableColumns
 import android.util.Log
 import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.iid.FirebaseInstanceId
@@ -148,6 +149,15 @@ class Repository(private val remoteDataSource: RemoteDataSource,
         return DatabaseMapper.mapToEntity(localDataSource.getTest(id)!!)
     }
 
+    override suspend fun getSingleTest(uploadToken:String) : TestEntity {
+        val id = localDataSource.findIdFromToken(uploadToken)
+        return DatabaseMapper.mapToEntity(localDataSource.getTest(id)!!)
+    }
+
+    override suspend fun getSingleTestFromRemote(uploadToken:String) : TestEntity {
+        return DatabaseMapper.mapToEntity(localDataSource.getTestFromRemote(uploadToken)!!)
+    }
+
     override suspend fun saveTest(t : TestEntity): Long {
         return localDataSource.saveTest(DatabaseMapper.mapToModel(t))
     }
@@ -192,6 +202,10 @@ class Repository(private val remoteDataSource: RemoteDataSource,
 
     override suspend fun addDiagnosisToQueue(token:String,email:String, diagnosis:String) {
         localDataSource.addDiagnosisToQueue(token,email, diagnosis)
+    }
+
+    override suspend fun getDiagnosisUrl(uploadToken: String):Uri {
+        return localDataSource.getDiagnosisUrl(uploadToken)
     }
 
 }

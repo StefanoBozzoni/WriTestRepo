@@ -150,7 +150,8 @@ class UploadFilesViewModel(
                                            iDClassType = "1",
                                            school      = scuola,
                                            classType   = classe,
-                                           idTest      = null)
+                                           idTest      = null,
+                                           diagnosis   = "No" )
                         async { saveDataToDB(testToSave) }.await()
                     }
                     generateNewTokenSusp()

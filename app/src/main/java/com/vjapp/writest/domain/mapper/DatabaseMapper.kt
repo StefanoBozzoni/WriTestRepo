@@ -19,7 +19,8 @@ class DatabaseMapper {
                     classType   = classType,
                     iDSchool    = iDSchool,
                     iDClassType = iDClassType,
-                    idTest      = idTest
+                    idTest      = idTest,
+                    diagnosis   = diagnosis?:"No"
                 )
             }
         }
@@ -35,7 +36,8 @@ class DatabaseMapper {
                     classType   = classType,
                     iDSchool    = iDSchool,
                     iDClassType = iDClassType,
-                    idTest      = idTest
+                    idTest      = idTest,
+                    diagnosis   = diagnosis
                 )
                 //x.idTest=testEntity.idTest
             }
